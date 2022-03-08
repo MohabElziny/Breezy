@@ -1,4 +1,4 @@
-package com.iti.mohab.breezy.ui.home
+package com.iti.mohab.breezy.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

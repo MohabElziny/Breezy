@@ -5,10 +5,16 @@
       <map>
         <entry key="app/src/main/res/drawable/alerts.xml" value="0.1575" />
         <entry key="app/src/main/res/drawable/favorite.xml" value="0.1575" />
+        <entry key="app/src/main/res/drawable/humidity.xml" value="0.1575" />
+        <entry key="app/src/main/res/drawable/ic_clouds_svgrepo_com.xml" value="0.1575" />
+        <entry key="app/src/main/res/drawable/pressure.xml" value="0.1575" />
+        <entry key="app/src/main/res/drawable/wind_speed.xml" value="0.1575" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.12" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.1598731884057971" />
         <entry key="app/src/main/res/layout/fragment_alerts.xml" value="0.1598731884057971" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1598731884057971" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/temp_per_day_card.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/temp_per_time_card.xml" value="0.33" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.18489583333333334" />
       </map>
     </option>

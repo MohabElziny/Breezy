@@ -1,13 +1,13 @@
-package com.iti.mohab.breezy.ui.alerts
+package com.iti.mohab.breezy.favorites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class AlertsViewModel : ViewModel() {
+class FavoritesViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is alerts Fragment"
+        value = "This is favorites Fragment"
     }
     val text: LiveData<String> = _text
 }

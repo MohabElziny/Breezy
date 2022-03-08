@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Breezy</string>
+    <string name="title_home">الصفحة الرئيسية</string>
+    <string name="title_dashboard">المفضلة</string>
+    <string name="title_notifications">تنبيهات</string>
+    <string name="pressure">الضغط</string>
+    <string name="Humidity">الرطوبة</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="next_days">الأيام القادمة</string>
+</resources>
