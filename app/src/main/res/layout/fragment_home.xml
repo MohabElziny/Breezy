@@ -109,8 +109,8 @@
 
         <ImageView
             android:id="@+id/image_weather_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginStart="32dp"
             app:layout_constraintBottom_toBottomOf="@+id/text_temp_description"
             app:layout_constraintStart_toStartOf="parent"
@@ -240,7 +240,7 @@
             app:layout_constraintTop_toTopOf="@+id/textView6" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/textWindSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"

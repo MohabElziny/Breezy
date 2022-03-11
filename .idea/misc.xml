@@ -13,7 +13,7 @@
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.1598731884057971" />
         <entry key="app/src/main/res/layout/fragment_alerts.xml" value="0.1598731884057971" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/temp_per_day_card.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/temp_per_day_card.xml" value="0.33" />
         <entry key="app/src/main/res/layout/temp_per_time_card.xml" value="0.33" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.18489583333333334" />
       </map>
