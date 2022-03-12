@@ -1,12 +1,7 @@
-package com.iti.mohab.breezy.datasource.network
+package com.iti.mohab.breezy.datasource.remote
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.iti.mohab.breezy.model.OpenWeatherApi
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertNotNull
 import org.junit.Rule
-import org.junit.Test
-import retrofit2.Response
 
 //@RunWith(AndroidJUnit4::class)
 class RetrofitHelperTest {

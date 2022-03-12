@@ -1,15 +1,13 @@
-package com.iti.mohab.breezy.home
+package com.iti.mohab.breezy.home.view
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.TempPerTimeCardBinding
 import com.iti.mohab.breezy.model.Hourly
 import com.iti.mohab.breezy.util.convertLongToTime
 import com.iti.mohab.breezy.util.getIcon
-import java.util.ArrayList
 
 class TempPerTimeAdapter(private val context: Context) :
     RecyclerView.Adapter<TempPerTimeAdapter.ViewHolder>() {
@@ -30,7 +28,7 @@ class TempPerTimeAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val hour = hourly[position]
+        val hour = hourly[position + 1]
         hour.weather[0].icon?.let { getIcon(it) }
             ?.let { holder.binding.imageCardTempIcon.setImageResource(it) }
         holder.binding.textCardTemp.text = "${hour.temp}"
@@ -38,7 +36,7 @@ class TempPerTimeAdapter(private val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return hourly.size
+        return hourly.size - 1
     }
 
 }

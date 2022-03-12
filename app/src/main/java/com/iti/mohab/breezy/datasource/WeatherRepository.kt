@@ -7,9 +7,10 @@ import androidx.room.Room
 import com.iti.mohab.breezy.datasource.local.LocalSource
 import com.iti.mohab.breezy.datasource.local.RoomLocalClass
 import com.iti.mohab.breezy.datasource.local.WeatherDatabase
-import com.iti.mohab.breezy.datasource.network.RemoteSource
-import com.iti.mohab.breezy.datasource.network.RetrofitHelper
+import com.iti.mohab.breezy.datasource.remote.RemoteSource
+import com.iti.mohab.breezy.datasource.remote.RetrofitHelper
 import com.iti.mohab.breezy.model.OpenWeatherApi
+import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -36,8 +37,8 @@ class WeatherRepository(
     }
 
     override suspend fun updateWeatherFromRemoteDataSource(
-        lat: Double,
-        long: Double,
+        lat: String,
+        long: String,
         language: String,
         units: String
     ) {
@@ -52,19 +53,20 @@ class WeatherRepository(
     }
 
     override suspend fun insertWeatherFromRemoteDataSource(
-        lat: Double,
-        long: Double,
+        lat: String,
+        long: String,
         language: String,
         units: String
-    ) {
+    ): OpenWeatherApi? {
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
-        Log.i("zoz500", "insertWeatherFromRemoteDataSource: ${remoteWeather.body()}")
-        if (remoteWeather.isSuccessful) {
+        return if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
                 weatherLocalDataSource.insertCurrentWeather(it)
             }
+            remoteWeather.body()
         } else {
-            throw Exception("${remoteWeather.errorBody()}")
+            null
+            //            throw Exception("${remoteWeather.errorBody()}")
         }
     }
 

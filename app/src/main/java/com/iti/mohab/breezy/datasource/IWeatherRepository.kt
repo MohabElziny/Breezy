@@ -5,18 +5,18 @@ import com.iti.mohab.breezy.model.OpenWeatherApi
 
 interface IWeatherRepository {
     suspend fun updateWeatherFromRemoteDataSource(
-        lat: Double,
-        long: Double,
-        language: String = "en",
-        units: String = "imperial"
-    )
-
-    suspend fun insertWeatherFromRemoteDataSource(
-        lat: Double,
-        long: Double,
+        lat: String,
+        long: String,
         language: String = "en",
         units: String = "metric"
     )
+
+    suspend fun insertWeatherFromRemoteDataSource(
+        lat: String,
+        long: String,
+        language: String = "en",
+        units: String = "metric"
+    ) : OpenWeatherApi?
 
     suspend fun getWeatherFromLocalDataSource(
         timeZone: String

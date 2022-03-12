@@ -1,14 +1,17 @@
 package com.iti.mohab.breezy.util
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import com.iti.mohab.breezy.R
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun getIcon(imageString: String): Int {
-    var imageInInteger: Int = -1
+    var imageInInteger: Int
     when (imageString) {
         "01d" -> imageInInteger = R.drawable.icon_01d
         "01n" -> imageInInteger = R.drawable.icon_01n
@@ -28,12 +31,12 @@ fun getIcon(imageString: String): Int {
         "13n" -> imageInInteger = R.drawable.icon_13n
         "50d" -> imageInInteger = R.drawable.icon_50d
         "50n" -> imageInInteger = R.drawable.icon_50n
+        else -> imageInInteger = R.drawable.clouds
     }
     return imageInInteger
 }
 
 fun convertLongToTime(time: Long): String {
-
     val date = Date(TimeUnit.SECONDS.toMillis(time))
     val format = SimpleDateFormat("h:mm a")
     return format.format(date)
@@ -48,3 +51,73 @@ fun convertCalenderToDayDate(calendar: Calendar): String {
     val format = SimpleDateFormat("d MMM, yyyy")
     return format.format(date)
 }
+
+fun getSharedPreferences(context: Context): SharedPreferences {
+    return context.getSharedPreferences(
+        context.getString(R.string.shared_pref),
+        Context.MODE_PRIVATE
+    )
+}
+
+fun isSharedPreferencesLocationAndTimeZoneNull(context: Context): Boolean {
+    val myPref = getSharedPreferences(context)
+    val location = myPref.getString(context.getString(R.string.location), null)
+    val timeZone = myPref.getString(context.getString(R.string.timeZone), null)
+    return location.isNullOrEmpty() && timeZone.isNullOrEmpty()
+}
+
+fun isSharedPreferencesLatAndLongNull(context: Context): Boolean {
+    val myPref = getSharedPreferences(context)
+    val lat = myPref.getString(context.getString(R.string.lat), null)
+    val long = myPref.getString(context.getString(R.string.lon), null)
+    return lat.isNullOrEmpty() && long.isNullOrEmpty()
+}
+
+fun updateSharedPreferences(
+    context: Context,
+    lat: String,
+    long: String,
+    location: String,
+    timeZone: String
+) {
+    val editor = getSharedPreferences(context).edit()
+    editor.clear()
+    editor.putString(context.getString(R.string.lat), lat)
+    editor.putString(context.getString(R.string.lon), long)
+    editor.putString(context.getString(R.string.location), location)
+    editor.putString(context.getString(R.string.timeZone), timeZone)
+    editor.apply()
+}
+
+fun isOnline(context: Context): Boolean {
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            when {
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                    return true
+                }
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                    return true
+                }
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                    return true
+                }
+            }
+        }
+    } else {
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+            return true
+        }
+    }
+    return false
+}
+
+fun String.fullTrim() = trim().replace("\uFEFF", "")
+
+
+

@@ -7,8 +7,8 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "weather")
 data class OpenWeatherApi(
-    @SerializedName("lat") var lat: Double? = null,
-    @SerializedName("lon") var lon: Double? = null,
+    @SerializedName("lat") var lat: String? = null,
+    @SerializedName("lon") var lon: String? = null,
     @PrimaryKey
     @NonNull
     @SerializedName("timezone") var timezone: String,

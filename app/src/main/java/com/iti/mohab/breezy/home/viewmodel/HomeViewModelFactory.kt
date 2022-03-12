@@ -1,4 +1,4 @@
-package com.iti.mohab.breezy.home
+package com.iti.mohab.breezy.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

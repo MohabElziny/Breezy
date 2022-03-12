@@ -1,4 +1,4 @@
-package com.iti.mohab.breezy.datasource.network
+package com.iti.mohab.breezy.datasource.remote
 
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import retrofit2.Response
@@ -13,8 +13,8 @@ private const val defaultLanguage = "en"
 interface RetrofitService {
     @GET("onecall")
     suspend fun getCurrentWeather(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("exclude") exclude: String = excludeMinutely,
         @Query("units") units: String = defaultUnits,
         @Query("lang") lang: String = defaultLanguage,

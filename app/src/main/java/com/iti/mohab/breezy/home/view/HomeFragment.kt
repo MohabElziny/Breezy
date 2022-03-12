@@ -1,7 +1,5 @@
-package com.iti.mohab.breezy.home
+package com.iti.mohab.breezy.home.view
 
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,14 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.FragmentHomeBinding
 import com.iti.mohab.breezy.datasource.WeatherRepository
+import com.iti.mohab.breezy.home.viewmodel.HomeViewModel
+import com.iti.mohab.breezy.home.viewmodel.HomeViewModelFactory
 import com.iti.mohab.breezy.model.Daily
 import com.iti.mohab.breezy.model.Hourly
 import com.iti.mohab.breezy.model.OpenWeatherApi
-import com.iti.mohab.breezy.util.convertCalenderToDayDate
-import com.iti.mohab.breezy.util.convertCalenderToDayString
-import com.iti.mohab.breezy.util.getIcon
+import com.iti.mohab.breezy.util.*
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -26,6 +25,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var tempPerDayAdapter: TempPerDayAdapter
     private lateinit var tempPerTimeAdapter: TempPerTimeAdapter
+    private lateinit var latitude: String
+    private lateinit var longitude: String
 
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(WeatherRepository.getRepository(requireActivity().application))
@@ -47,10 +48,63 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.setLocation()
+        if (isOnline(requireContext())) {
+            if (isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
+                if (!isSharedPreferencesLatAndLongNull(requireContext())) {
+                    latitude =
+                        getSharedPreferences(requireContext()).getString(
+                            getString(R.string.lat),
+                            ""
+                        )
+                            ?: ""
+                    longitude =
+                        getSharedPreferences(requireContext()).getString(
+                            getString(R.string.lon),
+                            ""
+                        )
+                            ?: ""
+                    val result = viewModel.insertData(latitude, longitude)
+                    Log.i("zoz", "onViewCreated: ${result.timezone}")
+                    viewModel.getDataFromDatabase(result.timezone)
+                    updateSharedPreferences(
+                        requireContext(),
+                        result.lat!!,
+                        result.lon!!,
+//                getCityText(it.lat!!, it.lon!!),
+                        result.timezone,
+                        result.timezone
+                    )
+                }
+            } else {
+                latitude =
+                    getSharedPreferences(requireContext()).getString(getString(R.string.lat), "")
+                        ?: ""
+                longitude =
+                    getSharedPreferences(requireContext()).getString(getString(R.string.lon), "")
+                        ?: ""
+                viewModel.updateData(latitude, longitude)
+            }
+        } else {
+            if (!isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
+                viewModel.getDataFromDatabase(
+                    getSharedPreferences(requireContext()).getString(
+                        getString(R.string.timeZone),
+                        ""
+                    ) ?: ""
+                )
+            }
+        }
 
         viewModel.openWeatherAPI?.observe(viewLifecycleOwner) {
+            Log.i("zoz", "onViewCreated: $it")
+            updateSharedPreferences(
+                requireContext(),
+                it.lat!!,
+                it.lon!!,
+//                getCityText(it.lat!!, it.lon!!),
+                it.timezone,
+                it.timezone
+            )
             setData(it)
             fetchTempPerTimeRecycler(it.hourly as ArrayList<Hourly>)
             fetchTempPerDayRecycler(it.daily as ArrayList<Daily>)
@@ -86,7 +140,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setData(model: OpenWeatherApi) {
-        var weather = model.current?.weather?.get(0)
+        val weather = model.current?.weather?.get(0)
         weather?.icon?.let { getIcon(it) }
             ?.let { binding.imageWeatherIcon.setImageResource(it) }
         binding.textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance())
@@ -96,21 +150,24 @@ class HomeFragment : Fragment() {
         binding.textHumidity.text = model.current?.humidity.toString()
         binding.textPressure.text = model.current?.pressure.toString()
         binding.textWindSpeed.text = model.current?.windSpeed.toString()
-        setCityText(model.lat!!, model.lon!!)
+//        binding.textCity.text = getCityText(model.lat!!, model.lon!!)
+        binding.textCity.text = model.timezone
     }
 
-    private fun setCityText(lat: Double, lon: Double) {
-        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        val addresses: List<Address> = geocoder.getFromLocation(lat, lon, 1)
-        val address: List<String> = addresses[0].getAddressLine(0).split(",")
-        val cityName = address[address.size - 2]
-//        val stateName: String = addresses[0].getAddressLine(1)
-        val countryName: String = address[address.size - 1]
-        binding.textCity.text = "$cityName, $countryName"
-    }
+//    private fun getCityText(lat: String, lon: String): String {
+//        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+//        val addresses: List<Address> =
+//            geocoder.getFromLocation(lat.fullTrim().toDouble(), lon.fullTrim().toDouble(), 1)
+//        val state = addresses[0].adminArea // damietta
+//        val country = addresses[0].countryName
+////        val knownName = addresses[0].featureName // elglaa
+//        return "$state, $country"
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }
+
