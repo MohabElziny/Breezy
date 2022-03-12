@@ -68,22 +68,22 @@ fun isSharedPreferencesLocationAndTimeZoneNull(context: Context): Boolean {
 
 fun isSharedPreferencesLatAndLongNull(context: Context): Boolean {
     val myPref = getSharedPreferences(context)
-    val lat = myPref.getString(context.getString(R.string.lat), null)
-    val long = myPref.getString(context.getString(R.string.lon), null)
-    return lat.isNullOrEmpty() && long.isNullOrEmpty()
+    val lat = myPref.getFloat(context.getString(R.string.lat), 0.0f)
+    val long = myPref.getFloat(context.getString(R.string.lon), 0.0f)
+    return lat == 0.0f && long == 0.0f
 }
 
 fun updateSharedPreferences(
     context: Context,
-    lat: String,
-    long: String,
+    lat: Double,
+    long: Double,
     location: String,
     timeZone: String
 ) {
     val editor = getSharedPreferences(context).edit()
-    editor.clear()
-    editor.putString(context.getString(R.string.lat), lat)
-    editor.putString(context.getString(R.string.lon), long)
+//    editor.clear()
+    editor.putFloat(context.getString(R.string.lat), lat.toFloat())
+    editor.putFloat(context.getString(R.string.lon), long.toFloat())
     editor.putString(context.getString(R.string.location), location)
     editor.putString(context.getString(R.string.timeZone), timeZone)
     editor.apply()

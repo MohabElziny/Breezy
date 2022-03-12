@@ -29,10 +29,10 @@ class TempPerTimeAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val hour = hourly[position + 1]
-        hour.weather[0].icon?.let { getIcon(it) }
-            ?.let { holder.binding.imageCardTempIcon.setImageResource(it) }
+
+        holder.binding.imageCardTempIcon.setImageResource(getIcon(hour.weather[0].icon))
         holder.binding.textCardTemp.text = "${hour.temp}"
-        holder.binding.textCardTime.text = "${hour.dt?.let { convertLongToTime(it) }}"
+        holder.binding.textCardTime.text = convertLongToTime(hour.dt)
     }
 
     override fun getItemCount(): Int {

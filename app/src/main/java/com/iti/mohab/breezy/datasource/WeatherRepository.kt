@@ -41,12 +41,13 @@ class WeatherRepository(
         long: String,
         language: String,
         units: String
-    ) {
+    ): OpenWeatherApi {
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
         if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
                 weatherLocalDataSource.updateCurrentWeather(it)
             }
+            return remoteWeather.body()!!
         } else {
             throw Exception("${remoteWeather.errorBody()}")
         }
@@ -57,20 +58,19 @@ class WeatherRepository(
         long: String,
         language: String,
         units: String
-    ): OpenWeatherApi? {
+    ): OpenWeatherApi {
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
         return if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
                 weatherLocalDataSource.insertCurrentWeather(it)
             }
-            remoteWeather.body()
+            remoteWeather.body()!!
         } else {
-            null
-            //            throw Exception("${remoteWeather.errorBody()}")
+            throw Exception("${remoteWeather.errorBody()}")
         }
     }
 
-    override suspend fun getWeatherFromLocalDataSource(
+    override fun getWeatherFromLocalDataSource(
         timeZone: String
     ): LiveData<OpenWeatherApi> {
         return weatherLocalDataSource.getCurrentWeather(timeZone)

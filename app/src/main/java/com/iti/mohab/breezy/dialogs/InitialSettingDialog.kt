@@ -168,8 +168,8 @@ class InitialSettingDialog : DialogFragment() {
 
     private fun saveLocationInSharedPreferences(long: Double, lat: Double) {
         val editor = getSharedPreferences(this.requireContext()).edit()
-        editor.putString(getString(R.string.lat), "$lat")
-        editor.putString(getString(R.string.lon), "$long")
+        editor.putFloat(getString(R.string.lat), lat.toFloat())
+        editor.putFloat(getString(R.string.lon), long.toFloat())
         editor.putBoolean("firstTime", false)
         editor.apply()
         startMainActivity()
@@ -190,6 +190,5 @@ class InitialSettingDialog : DialogFragment() {
         fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
     }
 
-    
 
 }

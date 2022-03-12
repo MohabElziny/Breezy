@@ -6,7 +6,7 @@ import com.iti.mohab.breezy.model.OpenWeatherApi
 
 class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
 
-    override suspend fun getCurrentWeather(timeZone: String): LiveData<OpenWeatherApi> {
+    override fun getCurrentWeather(timeZone: String): LiveData<OpenWeatherApi> {
         return weatherDao.getCurrentWeather(timeZone)
     }
 

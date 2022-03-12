@@ -32,11 +32,10 @@ class TempPerDayAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val day = daily[position + 1]
 
-        day.weather[0]?.icon?.let { getIcon(it) }
-            ?.let { holder.binding.imageCardDayIcon.setImageResource(it) }
-        holder.binding.textCardDay.text = day.dt?.let { convertLongToDay(it) }
+        holder.binding.imageCardDayIcon.setImageResource(getIcon(day.weather[0].icon))
+        holder.binding.textCardDay.text = convertLongToDay(day.dt)
         holder.binding.textCardDayTempDescription.text = day.weather[0].description
-        holder.binding.textCardDayTemp.text = day.temp?.day.toString()
+        holder.binding.textCardDayTemp.text = day.temp.day.toString()
     }
 
     override fun getItemCount(): Int {

@@ -9,16 +9,16 @@ interface IWeatherRepository {
         long: String,
         language: String = "en",
         units: String = "metric"
-    )
+    ) : OpenWeatherApi
 
     suspend fun insertWeatherFromRemoteDataSource(
         lat: String,
         long: String,
         language: String = "en",
         units: String = "metric"
-    ) : OpenWeatherApi?
+    ) : OpenWeatherApi
 
-    suspend fun getWeatherFromLocalDataSource(
+    fun getWeatherFromLocalDataSource(
         timeZone: String
     ): LiveData<OpenWeatherApi>
 
