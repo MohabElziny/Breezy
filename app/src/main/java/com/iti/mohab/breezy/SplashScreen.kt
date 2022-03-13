@@ -6,29 +6,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.iti.mohab.breezy.dialogs.InitialSettingDialog
 import com.iti.mohab.breezy.util.getSharedPreferences
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
+    private val parentJob = Job()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         if (isFirstTime()) {
             InitialSettingDialog().show(supportFragmentManager, "InitialFragment")
         } else {
-            runBlocking {
+            val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
+            coroutineScope.launch {
                 delay(4000)
                 startMainScreen()
             }
         }
-
-
-//        val handler = Handler(Looper.getMainLooper())
-//
-//        handler.postDelayed({
-//
-//        }, 4000)
     }
 
     override fun onBackPressed() {
@@ -40,6 +34,11 @@ class SplashScreen : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        parentJob.cancel()
     }
 
     private fun isFirstTime(): Boolean {

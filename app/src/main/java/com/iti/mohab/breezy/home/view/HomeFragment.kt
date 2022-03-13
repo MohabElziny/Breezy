@@ -1,14 +1,13 @@
 package com.iti.mohab.breezy.home.view
 
-import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.iti.mohab.breezy.R
@@ -20,6 +19,7 @@ import com.iti.mohab.breezy.model.Daily
 import com.iti.mohab.breezy.model.Hourly
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import com.iti.mohab.breezy.util.*
+import java.io.IOException
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -44,7 +44,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-//        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         return binding.root
     }
 
@@ -53,83 +52,56 @@ class HomeFragment : Fragment() {
         if (isOnline(requireContext())) {
             if (isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
                 if (!isSharedPreferencesLatAndLongNull(requireContext())) {
-                    latitude =
-                        getSharedPreferences(requireContext()).getFloat(
-                            getString(R.string.lat),
-                            0.0f
-                        ).toDouble()
-                    longitude =
-                        getSharedPreferences(requireContext()).getFloat(
-                            getString(R.string.lon),
-                            0.0f
-                        ).toDouble()
+                    setLatitudeAndLongitudeValuesFromSharedPreferences()
                     viewModel.insertData("$latitude", "$longitude")
-//                    viewModel.getDataFromDatabase(result.timezone)
-//                    updateSharedPreferences(
-//                        requireContext(),
-//                        result.lat!!,
-//                        result.lon!!,
-//                getCityText(result.lat!!, result.lon!!),
-////                        result.timezone,
-//                        result.timezone
-//                    )
+                } else if (getIsMap()) {
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_navigation_home_to_mapsFragment)
                 }
             } else {
-                latitude =
-                    getSharedPreferences(requireContext()).getFloat(
-                        getString(R.string.lat),
-                        0.0f
-                    ).toDouble()
-                longitude =
-                    getSharedPreferences(requireContext()).getFloat(
-                        getString(R.string.lon),
-                        0.0f
-                    ).toDouble()
-                Log.i("ziny", "onViewCreated: $latitude, $longitude")
+                setLatitudeAndLongitudeValuesFromSharedPreferences()
                 viewModel.updateData("$latitude", "$longitude")
             }
         } else {
             if (!isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
-                viewModel.getDataFromDatabase(
-                    getSharedPreferences(requireContext()).getString(
-                        getString(R.string.timeZone),
-                        ""
-                    ) ?: ""
-                )
+                val timeZone = getSharedPreferences(requireContext()).getString(
+                    getString(R.string.timeZone),
+                    ""
+                ) ?: ""
+                if (!timeZone.isNullOrEmpty()) {
+                    viewModel.getDataFromDatabase(timeZone)
+                }
             }
         }
 
-        viewModel.openWeatherAPI?.observe(viewLifecycleOwner) {
+        viewModel.openWeatherAPI.observe(viewLifecycleOwner) {
             updateSharedPreferences(
                 requireContext(),
                 it.lat,
                 it.lon,
                 getCityText(it.lat, it.lon),
-//                it.timezone,
                 it.timezone
             )
             setData(it)
             fetchTempPerTimeRecycler(it.hourly as ArrayList<Hourly>)
             fetchTempPerDayRecycler(it.daily as ArrayList<Daily>)
         }
-
-        //tempPerTimeAdapter
-        val tempPerTimeLinearLayoutManager = LinearLayoutManager(HomeFragment().context)
-        tempPerTimeLinearLayoutManager.orientation = RecyclerView.HORIZONTAL
-        tempPerTimeAdapter = TempPerTimeAdapter(this.requireContext())
-        binding.recyclerViewTempPerTime.layoutManager = tempPerTimeLinearLayoutManager
-        binding.recyclerViewTempPerTime.adapter = tempPerTimeAdapter
-
+        //tempPerHourAdapter
+        initTimeRecyclerView()
 
         //tempPerDayAdapter
-        val tempPerDayLinearLayoutManager = LinearLayoutManager(HomeFragment().context)
-        tempPerDayAdapter = TempPerDayAdapter(this.requireContext())
-        binding.recyclerViewTempPerDay.layoutManager = tempPerDayLinearLayoutManager
-        binding.recyclerViewTempPerDay.adapter = tempPerDayAdapter
+        initDayRecyclerView()
 
-//        viewModel.text.observe(viewLifecycleOwner) {
-//            binding.textHome.text = it
-//        }
+        binding.btnSetting.setOnClickListener {
+            Navigation.findNavController(view)
+                .navigate(R.id.action_navigation_home_to_settingsFragment);
+        }
+
+    }
+
+    private fun getIsMap(): Boolean {
+        val sharedPreferences = getSharedPreferences(requireContext())
+        return sharedPreferences.getBoolean("isMap", false)
     }
 
     private fun fetchTempPerDayRecycler(daily: ArrayList<Daily>) {
@@ -157,14 +129,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun getCityText(lat: Double, lon: Double): String {
-        var city = ""
-        val geocoder = Geocoder(requireContext(), Locale("en"))
-        val addresses: List<Address> = geocoder.getFromLocation(lat, lon, 1)
-        Log.i("ziny", "getCityText: $lat + $lon + $addresses")
-        if (addresses.isNotEmpty()) {
-            val state = addresses[0].adminArea // damietta
-            val country = addresses[0].countryName
-            city = "$state, $country"
+        var city = "Unknown!"
+        val geocoder = Geocoder(context, Locale.getDefault())
+        try {
+            val addresses = geocoder.getFromLocation(lat, lon, 1)[0]
+            if (addresses != null) {
+                val state = addresses.adminArea // damietta
+                val country = addresses.countryName
+                city = "$state, $country"
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
 //        val knownName = addresses[0].featureName // elglaa
         return city
@@ -174,6 +149,35 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun initTimeRecyclerView() {
+        val tempPerTimeLinearLayoutManager = LinearLayoutManager(HomeFragment().context)
+        tempPerTimeLinearLayoutManager.orientation = RecyclerView.HORIZONTAL
+        tempPerTimeAdapter = TempPerTimeAdapter(this.requireContext())
+        binding.recyclerViewTempPerTime.layoutManager = tempPerTimeLinearLayoutManager
+        binding.recyclerViewTempPerTime.adapter = tempPerTimeAdapter
+    }
+
+    private fun initDayRecyclerView() {
+        val tempPerDayLinearLayoutManager = LinearLayoutManager(HomeFragment().context)
+        tempPerDayAdapter = TempPerDayAdapter(this.requireContext())
+        binding.recyclerViewTempPerDay.layoutManager = tempPerDayLinearLayoutManager
+        binding.recyclerViewTempPerDay.adapter = tempPerDayAdapter
+    }
+
+    private fun setLatitudeAndLongitudeValuesFromSharedPreferences() {
+        latitude =
+            getSharedPreferences(requireContext()).getFloat(
+                getString(R.string.lat),
+                0.0f
+            ).toDouble()
+        longitude =
+            getSharedPreferences(requireContext()).getFloat(
+                getString(R.string.lon),
+                0.0f
+            ).toDouble()
+    }
+
 
 }
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.iti.mohab.breezy.model.OpenWeatherApi
 
 interface LocalSource {
-    fun getCurrentWeather(timeZone: String): LiveData<OpenWeatherApi>
+    fun getCurrentWeather(timeZone: String): OpenWeatherApi
 
     suspend fun insertCurrentWeather(weather: OpenWeatherApi)
 

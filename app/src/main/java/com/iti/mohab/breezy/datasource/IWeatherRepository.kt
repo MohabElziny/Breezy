@@ -20,7 +20,7 @@ interface IWeatherRepository {
 
     fun getWeatherFromLocalDataSource(
         timeZone: String
-    ): LiveData<OpenWeatherApi>
+    ): OpenWeatherApi
 
     suspend fun deleteWeatherFromLocalDataSource(
         timeZone: String

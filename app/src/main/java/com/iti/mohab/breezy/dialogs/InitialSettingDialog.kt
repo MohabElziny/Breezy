@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.Navigation
 import com.google.android.gms.location.*
 import com.iti.mohab.breezy.MainActivity
 import com.iti.mohab.breezy.R
@@ -50,9 +51,13 @@ class InitialSettingDialog : DialogFragment() {
         binding.btnOk.setOnClickListener {
             if (binding.radioGroup.checkedRadioButtonId == R.id.radio_gps) {
                 getFreshLocation()
+            } else if (binding.radioGroup.checkedRadioButtonId == R.id.radio_maps) {
+                saveIsMapInSharedPreferences()
             }
         }
     }
+
+
 
 
     override fun onStart() {
@@ -139,7 +144,7 @@ class InitialSettingDialog : DialogFragment() {
                     this.requestLocationUpdates(
                         locationRequest,
                         locationCallback,
-                        Looper.getMainLooper()!!
+                        Looper.getMainLooper()
                     )
                 }
             } else {
@@ -156,7 +161,6 @@ class InitialSettingDialog : DialogFragment() {
             val location = locationResult.lastLocation
             latitude = location.latitude
             longitude = location.longitude
-            Log.i("zoz", "onLocationResult: $longitude")
             saveLocationInSharedPreferences(latitude, longitude)
         }
     }
@@ -171,6 +175,14 @@ class InitialSettingDialog : DialogFragment() {
         editor.putFloat(getString(R.string.lat), lat.toFloat())
         editor.putFloat(getString(R.string.lon), long.toFloat())
         editor.putBoolean("firstTime", false)
+        editor.apply()
+        startMainActivity()
+    }
+
+    private fun saveIsMapInSharedPreferences() {
+        val editor = getSharedPreferences(this.requireContext()).edit()
+        editor.putBoolean("firstTime",false)
+        editor.putBoolean("isMap",true)
         editor.apply()
         startMainActivity()
     }

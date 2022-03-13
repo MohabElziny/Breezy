@@ -1,12 +1,11 @@
 package com.iti.mohab.breezy.datasource.local
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import com.iti.mohab.breezy.model.OpenWeatherApi
 
 class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
 
-    override fun getCurrentWeather(timeZone: String): LiveData<OpenWeatherApi> {
+    override fun getCurrentWeather(timeZone: String): OpenWeatherApi {
         return weatherDao.getCurrentWeather(timeZone)
     }
 

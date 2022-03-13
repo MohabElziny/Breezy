@@ -72,7 +72,7 @@ class WeatherRepository(
 
     override fun getWeatherFromLocalDataSource(
         timeZone: String
-    ): LiveData<OpenWeatherApi> {
+    ): OpenWeatherApi {
         return weatherLocalDataSource.getCurrentWeather(timeZone)
     }
 
