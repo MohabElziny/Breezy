@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.iti.mohab.breezy.MapsFragment"
+        android:name="com.iti.mohab.breezy.map.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" >
         <action

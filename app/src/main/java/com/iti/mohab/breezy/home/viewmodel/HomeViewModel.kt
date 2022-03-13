@@ -4,26 +4,22 @@ import androidx.lifecycle.*
 import com.iti.mohab.breezy.datasource.IWeatherRepository
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class HomeViewModel(private val repository: IWeatherRepository) : ViewModel() {
 
-//    private val _text = MutableLiveData<String>().apply {
-//        value = "This is home Fragment"
+//    fun updateData(lat: String, long: String) {
+//        var result: OpenWeatherApi? = null
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val job = viewModelScope.launch(Dispatchers.IO) {
+//                result = repository.updateWeatherFromRemoteDataSource(lat, long)
+//            }
+//            job.join()
+//            getDataFromDatabase(result!!.timezone)
+//            this.cancel()
+//        }
 //    }
-//    val text: LiveData<String> = _text
-
-    fun updateData(lat: String, long: String) {
-        var result: OpenWeatherApi? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            val job = viewModelScope.launch(Dispatchers.IO) {
-                result = repository.updateWeatherFromRemoteDataSource(lat, long)
-            }
-            job.join()
-            getDataFromDatabase(result!!.timezone)
-        }
-    }
 
     fun getDataFromDatabase(timeZone: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -33,17 +29,16 @@ class HomeViewModel(private val repository: IWeatherRepository) : ViewModel() {
         }
     }
 
-    fun insertData(lat: String, long: String) {
+    fun getDataFromRemoteToLocal(lat: String, long: String) {
         var result: OpenWeatherApi? = null
-
-        val job =
-            viewModelScope.launch(Dispatchers.IO) {
-                result = repository.insertWeatherFromRemoteDataSource(lat, long)
-            }
-
         viewModelScope.launch(Dispatchers.Main) {
+            val job =
+                viewModelScope.launch(Dispatchers.IO) {
+                    result = repository.insertWeatherFromRemoteDataSource(lat, long)
+                }
             job.join()
             getDataFromDatabase(result!!.timezone)
+            this.cancel()
         }
     }
 

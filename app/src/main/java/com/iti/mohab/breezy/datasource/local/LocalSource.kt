@@ -10,5 +10,5 @@ interface LocalSource {
 
     suspend fun updateCurrentWeather(weather: OpenWeatherApi)
 
-    suspend fun deleteWeather(timeZone: String)
+    suspend fun deleteWeathers()
 }

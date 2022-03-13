@@ -53,14 +53,14 @@ class HomeFragment : Fragment() {
             if (isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
                 if (!isSharedPreferencesLatAndLongNull(requireContext())) {
                     setLatitudeAndLongitudeValuesFromSharedPreferences()
-                    viewModel.insertData("$latitude", "$longitude")
+                    viewModel.getDataFromRemoteToLocal("$latitude", "$longitude")
                 } else if (getIsMap()) {
                     Navigation.findNavController(view)
                         .navigate(R.id.action_navigation_home_to_mapsFragment)
                 }
             } else {
                 setLatitudeAndLongitudeValuesFromSharedPreferences()
-                viewModel.updateData("$latitude", "$longitude")
+                viewModel.getDataFromRemoteToLocal("$latitude", "$longitude")
             }
         } else {
             if (!isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
                     getString(R.string.timeZone),
                     ""
                 ) ?: ""
-                if (!timeZone.isNullOrEmpty()) {
+                if (timeZone.isNotEmpty()) {
                     viewModel.getDataFromDatabase(timeZone)
                 }
             }
@@ -94,7 +94,7 @@ class HomeFragment : Fragment() {
 
         binding.btnSetting.setOnClickListener {
             Navigation.findNavController(view)
-                .navigate(R.id.action_navigation_home_to_settingsFragment);
+                .navigate(R.id.action_navigation_home_to_settingsFragment)
         }
 
     }

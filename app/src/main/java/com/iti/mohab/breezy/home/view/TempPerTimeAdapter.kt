@@ -36,7 +36,16 @@ class TempPerTimeAdapter(private val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return hourly.size - 1
+        var size = 0
+        if (hourly.isNotEmpty()) {
+            for (i in 0..hourly.size) {
+                if (convertLongToTime(hourly[i].dt) == "11:00 PM") {
+                    size = i
+                    break
+                }
+            }
+        }
+        return size
     }
 
 }

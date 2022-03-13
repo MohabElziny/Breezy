@@ -45,7 +45,8 @@ class WeatherRepository(
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
         if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
-                weatherLocalDataSource.updateCurrentWeather(it)
+                deleteWeathersFromLocalDataSource()
+                weatherLocalDataSource.insertCurrentWeather(it)
             }
             return remoteWeather.body()!!
         } else {
@@ -62,6 +63,7 @@ class WeatherRepository(
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
         return if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
+                deleteWeathersFromLocalDataSource()
                 weatherLocalDataSource.insertCurrentWeather(it)
             }
             remoteWeather.body()!!
@@ -76,7 +78,7 @@ class WeatherRepository(
         return weatherLocalDataSource.getCurrentWeather(timeZone)
     }
 
-    override suspend fun deleteWeatherFromLocalDataSource(timeZone: String) {
-        weatherLocalDataSource.deleteWeather(timeZone)
+    override suspend fun deleteWeathersFromLocalDataSource() {
+        weatherLocalDataSource.deleteWeathers()
     }
 }

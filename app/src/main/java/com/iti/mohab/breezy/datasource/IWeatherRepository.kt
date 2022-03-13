@@ -22,7 +22,5 @@ interface IWeatherRepository {
         timeZone: String
     ): OpenWeatherApi
 
-    suspend fun deleteWeatherFromLocalDataSource(
-        timeZone: String
-    )
+    suspend fun deleteWeathersFromLocalDataSource()
 }

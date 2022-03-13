@@ -17,8 +17,8 @@ class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
         weatherDao.updateCurrentWeather(weather)
     }
 
-    override suspend fun deleteWeather(timeZone: String) {
-        weatherDao.deleteCurrentWeather(timeZone)
+    override suspend fun deleteWeathers() {
+        weatherDao.deleteCurrentWeather()
     }
 
 }
