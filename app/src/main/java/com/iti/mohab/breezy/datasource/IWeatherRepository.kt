@@ -1,26 +1,26 @@
 package com.iti.mohab.breezy.datasource
 
-import androidx.lifecycle.LiveData
 import com.iti.mohab.breezy.model.OpenWeatherApi
+import kotlinx.coroutines.flow.Flow
 
 interface IWeatherRepository {
-    suspend fun updateWeatherFromRemoteDataSource(
+    suspend fun insertFavoriteWeatherFromRemoteToLocal(
+        lat: String,
+        long: String,
+        language: String = "en",
+        units: String = "metric"
+    )
+
+    suspend fun insertCurrentWeatherFromRemoteToLocal(
         lat: String,
         long: String,
         language: String = "en",
         units: String = "metric"
     ) : OpenWeatherApi
 
-    suspend fun insertWeatherFromRemoteDataSource(
-        lat: String,
-        long: String,
-        language: String = "en",
-        units: String = "metric"
-    ) : OpenWeatherApi
-
-    fun getWeatherFromLocalDataSource(
-        timeZone: String
-    ): OpenWeatherApi
+    fun getCurrentWeatherFromLocalDataSource(): OpenWeatherApi
 
     suspend fun deleteWeathersFromLocalDataSource()
+
+    fun getFavoritesWeatherFromLocalDataSource(): Flow<List<OpenWeatherApi>>
 }

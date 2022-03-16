@@ -15,6 +15,7 @@ class TempPerDayAdapter(private val context: Context) :
     RecyclerView.Adapter<TempPerDayAdapter.ViewHolder>() {
 
     var daily: List<Daily> = emptyList()
+    var temperatureUnit: String = ""
 
     class ViewHolder(val binding: TempPerDayCardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -35,7 +36,7 @@ class TempPerDayAdapter(private val context: Context) :
         holder.binding.imageCardDayIcon.setImageResource(getIcon(day.weather[0].icon))
         holder.binding.textCardDay.text = convertLongToDay(day.dt)
         holder.binding.textCardDayTempDescription.text = day.weather[0].description
-        holder.binding.textCardDayTemp.text = day.temp.day.toString()
+        holder.binding.textCardDayTemp.text = day.temp.day.toString().plus(temperatureUnit)
     }
 
     override fun getItemCount(): Int {

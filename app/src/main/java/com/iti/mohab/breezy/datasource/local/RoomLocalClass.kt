@@ -1,16 +1,16 @@
 package com.iti.mohab.breezy.datasource.local
 
-import androidx.lifecycle.LiveData
 import com.iti.mohab.breezy.model.OpenWeatherApi
+import kotlinx.coroutines.flow.Flow
 
 class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
 
-    override fun getCurrentWeather(timeZone: String): OpenWeatherApi {
-        return weatherDao.getCurrentWeather(timeZone)
+    override fun getCurrentWeather(): OpenWeatherApi {
+        return weatherDao.getCurrentWeather()
     }
 
     override suspend fun insertCurrentWeather(weather: OpenWeatherApi) {
-        weatherDao.insertCurrentWeather(weather)
+        weatherDao.insertWeather(weather)
     }
 
     override suspend fun updateCurrentWeather(weather: OpenWeatherApi) {
@@ -19,6 +19,10 @@ class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
 
     override suspend fun deleteWeathers() {
         weatherDao.deleteCurrentWeather()
+    }
+
+    override fun getFavoritesWeather(): Flow<List<OpenWeatherApi>> {
+        return weatherDao.getFavoritesWeather()
     }
 
 }

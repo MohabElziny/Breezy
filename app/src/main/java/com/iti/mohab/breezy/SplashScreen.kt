@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.iti.mohab.breezy.dialogs.InitialSettingDialog
+import com.iti.mohab.breezy.dialogs.view.InitialSettingDialog
 import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.*
 

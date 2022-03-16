@@ -8,6 +8,6 @@ interface RemoteSource {
         lat: String,
         long: String,
         language: String,
-         units: String
+        units: String
     ): Response<OpenWeatherApi>
 }

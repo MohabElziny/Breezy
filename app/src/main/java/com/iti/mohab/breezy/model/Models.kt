@@ -7,10 +7,12 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "weather")
 data class OpenWeatherApi(
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    var id: Int,
+    var isFavorite: Boolean = false,
     @SerializedName("lat") var lat: Double,
     @SerializedName("lon") var lon: Double,
-    @PrimaryKey
-    @NonNull
     @SerializedName("timezone") var timezone: String,
     @SerializedName("timezone_offset") var timezoneOffset: Int,
     @SerializedName("current") var current: Current,

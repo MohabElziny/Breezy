@@ -1,6 +1,8 @@
 package com.iti.mohab.breezy.alerts.view
 
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,8 +38,31 @@ class AlertsFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        backToHomeScreen()
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun backToHomeScreen() {
+        binding.root.isFocusableInTouchMode = true
+        binding.root.requestFocus()
+        binding.root.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                activity?.supportFragmentManager?.beginTransaction()?.apply {
+                    remove(this@AlertsFragment)
+                    commit()
+                }
+                activity?.supportFragmentManager?.popBackStack()
+                return@OnKeyListener true
+            }
+            false
+        })
+    }
+
 }

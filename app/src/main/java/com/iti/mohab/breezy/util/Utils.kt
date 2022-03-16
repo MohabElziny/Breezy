@@ -2,16 +2,21 @@ package com.iti.mohab.breezy.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
+import android.view.KeyEvent
+import android.view.View
 import com.iti.mohab.breezy.R
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun getIcon(imageString: String): Int {
-    var imageInInteger: Int
+    val imageInInteger: Int
     when (imageString) {
         "01d" -> imageInInteger = R.drawable.icon_01d
         "01n" -> imageInInteger = R.drawable.icon_01n
@@ -117,7 +122,28 @@ fun isOnline(context: Context): Boolean {
     return false
 }
 
-fun String.fullTrim() = trim().replace("\uFEFF", "")
+fun getCurrentLocale(context: Context): Locale? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        context.resources.configuration.locales[0]
+    } else {
+        context.resources.configuration.locale
+    }
+}
 
+fun getCityText(context: Context, lat: Double, lon: Double): String {
+    var city = "Unknown!"
+    val geocoder = Geocoder(context, Locale.getDefault())
+    try {
+        val addresses = geocoder.getFromLocation(lat, lon, 1)
+        if (addresses.isNotEmpty()) {
+            city = "${addresses[0].adminArea}, ${addresses[0].countryName}"
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+//        val knownName = addresses[0].featureName // elglaa
+    return city
+}
+ 
 
 

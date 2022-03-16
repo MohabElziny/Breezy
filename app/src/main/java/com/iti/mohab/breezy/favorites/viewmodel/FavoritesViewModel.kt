@@ -1,13 +1,27 @@
 package com.iti.mohab.breezy.favorites.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.iti.mohab.breezy.datasource.WeatherRepository
+import com.iti.mohab.breezy.model.OpenWeatherApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class FavoritesViewModel : ViewModel() {
+class FavoritesViewModel(private val repository: WeatherRepository) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is favorites Fragment"
+    fun getFavorites() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getFavoritesWeatherFromLocalDataSource().collect {
+                _favorites.emit(it)
+            }
+        }
     }
-    val text: LiveData<String> = _text
+
+    private var _favorites = MutableStateFlow<List<OpenWeatherApi>>(emptyList())
+    val favorites = _favorites
+
+
 }

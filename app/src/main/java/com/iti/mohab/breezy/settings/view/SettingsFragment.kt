@@ -1,21 +1,37 @@
 package com.iti.mohab.breezy.settings.view
 
+import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.iti.mohab.breezy.MainActivity
+import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.SettingsFragmentBinding
 import com.iti.mohab.breezy.settings.viewmodel.SettingsViewModel
+import com.iti.mohab.breezy.util.getSharedPreferences
+import java.util.*
+
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
-
     private var _binding: SettingsFragmentBinding? = null
+    private lateinit var newUnitSetting: String
+    private lateinit var newLanguageSetting: String
+    private var newLocationSetting: Boolean = false
+
+    private lateinit var oldUnitSetting: String
+    private lateinit var oldLanguageSetting: String
+    private var oldLocationSetting: Boolean = false
+
 
     private val viewModel: SettingsViewModel by viewModels()
 
@@ -31,6 +47,153 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        handleBackButton()
+        setSettings()
+        binding.btnSave.setOnClickListener {
+            getLocationSettings()
+            getLanguagesSettings()
+            getUnitSettings()
+            if (newLocationSetting && oldLocationSetting) {
+                changeMapLocationDialog()
+            } else {
+                setSettingsToSharedPreferences()
+                if (newLanguageSetting != oldLanguageSetting) {
+                    setLocale(newLanguageSetting)
+                } else {
+                    backToHomeScreen()
+                }
+            }
+        }
+        binding.btnBack.setOnClickListener {
+            backToHomeScreen()
+        }
+    }
+
+    private fun backToHomeScreen() {
+        Navigation.findNavController(binding.root)
+            .navigate(R.id.action_settingsFragment_to_navigation_home)
+    }
+
+    private fun getUnitSettings() {
+        when (binding.radioGroupUnits.checkedRadioButtonId) {
+            R.id.unit_celsius -> newUnitSetting = "metric"
+            R.id.unit_fahrenheit -> newUnitSetting = "imperial"
+            R.id.unit_kelvin -> newUnitSetting = "standard"
+        }
+    }
+
+    private fun getLanguagesSettings() {
+        when (binding.radioGroupLanguage.checkedRadioButtonId) {
+            R.id.settings_arabic -> newLanguageSetting = "ar"
+            R.id.settings_english -> newLanguageSetting = "en"
+        }
+    }
+
+    private fun getLocationSettings() {
+        when (binding.radioGroupLocation.checkedRadioButtonId) {
+            R.id.settings_map -> newLocationSetting = true
+            R.id.settings_location -> newLocationSetting = false
+        }
+    }
+
+    private fun setSettings() {
+        getSettingsFromSharedPreferences()
+
+        when (oldUnitSetting) {
+            "metric" -> binding.unitCelsius.isChecked = true
+            "imperial" -> binding.unitFahrenheit.isChecked = true
+            "standard" -> binding.unitKelvin.isChecked = true
+        }
+
+        when (oldLanguageSetting) {
+            "ar" -> binding.settingsArabic.isChecked = true
+            "en" -> binding.settingsEnglish.isChecked = true
+        }
+
+        when (oldLocationSetting) {
+            true -> binding.settingsMap.isChecked = true
+            false -> binding.settingsLocation.isChecked = true
+        }
+
+    }
+
+    private fun getSettingsFromSharedPreferences() {
+        getSharedPreferences(requireContext()).apply {
+            oldUnitSetting = getString(getString(R.string.unitsSetting), "metric")!!
+            oldLanguageSetting = getString(getString(R.string.languageSetting), "en")!!
+            oldLocationSetting = getBoolean(getString(R.string.isMap), false)
+        }
+    }
+
+    private fun setSettingsToSharedPreferences() {
+        getSharedPreferences(requireContext()).edit().apply {
+            putString(getString(R.string.unitsSetting), newUnitSetting)
+            putString(getString(R.string.languageSetting), newLanguageSetting)
+            if (newLocationSetting && !oldLocationSetting) {
+                resetLocationData()
+            }
+            putBoolean(getString(R.string.isMap), newLocationSetting)
+            apply()
+        }
+    }
+
+    private fun resetLocationData() {
+        getSharedPreferences(requireContext()).edit().apply {
+            remove(getString(R.string.timeZone))
+            remove(getString(R.string.location))
+            remove(getString(R.string.lat))
+            remove(getString(R.string.lon))
+            apply()
+        }
+    }
+
+    private fun handleBackButton() {
+        binding.root.isFocusableInTouchMode = true
+        binding.root.requestFocus()
+        binding.root.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                backToHomeScreen()
+                return@OnKeyListener true
+            }
+            false
+        })
+    }
+
+    private fun changeMapLocationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Do you want to change your location on map again?")
+            .setNegativeButton("No") { dialog, _ ->
+                setSettingsToSharedPreferences()
+                if (newLanguageSetting != oldLanguageSetting) {
+                    setLocale(newLanguageSetting)
+                } else {
+                    backToHomeScreen()
+                }
+                dialog.dismiss()
+            }
+            .setPositiveButton("Yes") { dialog, _ ->
+                resetLocationData()
+                setSettingsToSharedPreferences()
+                if (newLanguageSetting != oldLanguageSetting) {
+                    setLocale(newLanguageSetting)
+                } else {
+                    backToHomeScreen()
+                }
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun setLocale(lang: String) {
+        val myLocale = Locale(lang)
+        val res: Resources = resources
+        val dm: DisplayMetrics = res.displayMetrics
+        val conf: Configuration = res.configuration
+        conf.locale = myLocale
+        res.updateConfiguration(conf, dm)
+        val refresh = Intent(requireContext(), MainActivity::class.java)
+        activity?.finish()
+        startActivity(refresh)
     }
 
 

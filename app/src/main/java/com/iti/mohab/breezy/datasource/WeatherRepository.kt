@@ -2,17 +2,15 @@ package com.iti.mohab.breezy.datasource
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.room.Room
 import com.iti.mohab.breezy.datasource.local.LocalSource
 import com.iti.mohab.breezy.datasource.local.RoomLocalClass
 import com.iti.mohab.breezy.datasource.local.WeatherDatabase
 import com.iti.mohab.breezy.datasource.remote.RemoteSource
 import com.iti.mohab.breezy.datasource.remote.RetrofitHelper
 import com.iti.mohab.breezy.model.OpenWeatherApi
-import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 
 class WeatherRepository(
     private val weatherRemoteDataSource: RemoteSource,
@@ -36,25 +34,24 @@ class WeatherRepository(
         }
     }
 
-    override suspend fun updateWeatherFromRemoteDataSource(
+    override suspend fun insertFavoriteWeatherFromRemoteToLocal(
         lat: String,
         long: String,
         language: String,
         units: String
-    ): OpenWeatherApi {
+    ) {
         val remoteWeather = weatherRemoteDataSource.getCurrentWeather(lat, long, language, units)
         if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
-                deleteWeathersFromLocalDataSource()
+                it.isFavorite = true
                 weatherLocalDataSource.insertCurrentWeather(it)
             }
-            return remoteWeather.body()!!
         } else {
             throw Exception("${remoteWeather.errorBody()}")
         }
     }
 
-    override suspend fun insertWeatherFromRemoteDataSource(
+    override suspend fun insertCurrentWeatherFromRemoteToLocal(
         lat: String,
         long: String,
         language: String,
@@ -64,6 +61,7 @@ class WeatherRepository(
         return if (remoteWeather.isSuccessful) {
             remoteWeather.body()?.let {
                 deleteWeathersFromLocalDataSource()
+                it.isFavorite = false
                 weatherLocalDataSource.insertCurrentWeather(it)
             }
             remoteWeather.body()!!
@@ -72,13 +70,17 @@ class WeatherRepository(
         }
     }
 
-    override fun getWeatherFromLocalDataSource(
-        timeZone: String
-    ): OpenWeatherApi {
-        return weatherLocalDataSource.getCurrentWeather(timeZone)
+    override fun getCurrentWeatherFromLocalDataSource(): OpenWeatherApi {
+        return weatherLocalDataSource.getCurrentWeather()
     }
 
     override suspend fun deleteWeathersFromLocalDataSource() {
         weatherLocalDataSource.deleteWeathers()
     }
+
+    override fun getFavoritesWeatherFromLocalDataSource(): Flow<List<OpenWeatherApi>> {
+        return weatherLocalDataSource.getFavoritesWeather()
+    }
+
+
 }

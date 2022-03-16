@@ -1,43 +1,39 @@
 package com.iti.mohab.breezy.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.iti.mohab.breezy.datasource.IWeatherRepository
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class HomeViewModel(private val repository: IWeatherRepository) : ViewModel() {
 
-//    fun updateData(lat: String, long: String) {
-//        var result: OpenWeatherApi? = null
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val job = viewModelScope.launch(Dispatchers.IO) {
-//                result = repository.updateWeatherFromRemoteDataSource(lat, long)
-//            }
-//            job.join()
-//            getDataFromDatabase(result!!.timezone)
-//            this.cancel()
-//        }
-//    }
-
-    fun getDataFromDatabase(timeZone: String) {
+    fun getDataFromDatabase() {
         viewModelScope.launch(Dispatchers.IO) {
             _openWeatherAPI.postValue(
-                repository.getWeatherFromLocalDataSource(timeZone)
+                repository.getCurrentWeatherFromLocalDataSource()
             )
         }
     }
 
-    fun getDataFromRemoteToLocal(lat: String, long: String) {
+    fun getDataFromRemoteToLocal(lat: String, long: String, language: String, units: String) {
         var result: OpenWeatherApi? = null
         viewModelScope.launch(Dispatchers.Main) {
             val job =
                 viewModelScope.launch(Dispatchers.IO) {
-                    result = repository.insertWeatherFromRemoteDataSource(lat, long)
+                    try {
+                        result =
+                            repository.insertCurrentWeatherFromRemoteToLocal(lat, long, language, units)
+                    } catch (e: Exception) {
+                        Log.i("zoz", "getDataFromRemoteToLocal: ${e.message}")
+                    }
+
                 }
             job.join()
-            getDataFromDatabase(result!!.timezone)
+            result?.let { getDataFromDatabase() }
             this.cancel()
         }
     }
