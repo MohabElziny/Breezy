@@ -4,16 +4,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.TempPerTimeCardBinding
 import com.iti.mohab.breezy.model.Hourly
 import com.iti.mohab.breezy.util.convertLongToTime
 import com.iti.mohab.breezy.util.getIcon
+import com.iti.mohab.breezy.util.getSharedPreferences
 
 class TempPerTimeAdapter(private val context: Context) :
     RecyclerView.Adapter<TempPerTimeAdapter.ViewHolder>() {
 
     var hourly: List<Hourly> = emptyList()
     var temperatureUnit: String = ""
+    private lateinit var language: String
 
 
     class ViewHolder(val binding: TempPerTimeCardBinding) :
@@ -31,17 +34,22 @@ class TempPerTimeAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val hour = hourly[position + 1]
-
         holder.binding.imageCardTempIcon.setImageResource(getIcon(hour.weather[0].icon))
         holder.binding.textCardTemp.text = "${hour.temp}".plus(temperatureUnit)
-        holder.binding.textCardTime.text = convertLongToTime(hour.dt).lowercase()
+        holder.binding.textCardTime.text = convertLongToTime(hour.dt,language).lowercase()
     }
 
     override fun getItemCount(): Int {
+        language = getSharedPreferences(context).getString(
+            context.getString(
+                R.string.languageSetting
+            ), "en"
+        )!!
         var size = 0
         if (hourly.isNotEmpty()) {
             for (i in 0..hourly.size) {
-                if (convertLongToTime(hourly[i].dt).lowercase() == "11:00 pm") {
+                val time = convertLongToTime(hourly[i].dt, language).lowercase()
+                if ( time == "11:00 pm"  || time == "١١:٠٠ م") {
                     size = i
                     break
                 }

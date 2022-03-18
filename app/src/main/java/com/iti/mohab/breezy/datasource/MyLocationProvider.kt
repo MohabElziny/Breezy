@@ -18,7 +18,7 @@ class MyLocationProvider(private val fragment: Fragment) {
     private var myLocationList = ArrayList<Double>()
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
-    private fun checkPermission(): Boolean {
+    fun checkPermission(): Boolean {
         return (ContextCompat.checkSelfPermission(
             fragment.requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -40,7 +40,7 @@ class MyLocationProvider(private val fragment: Fragment) {
     }
 
     // for get last location
-    private fun isLocationEnabled(): Boolean {
+    fun isLocationEnabled(): Boolean {
         val locationManager =
             fragment.requireActivity().application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)

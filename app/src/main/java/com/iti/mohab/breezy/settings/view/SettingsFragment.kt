@@ -1,10 +1,7 @@
 package com.iti.mohab.breezy.settings.view
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +15,6 @@ import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.SettingsFragmentBinding
 import com.iti.mohab.breezy.settings.viewmodel.SettingsViewModel
 import com.iti.mohab.breezy.util.getSharedPreferences
-import java.util.*
 
 
 class SettingsFragment : Fragment() {
@@ -31,7 +27,6 @@ class SettingsFragment : Fragment() {
     private lateinit var oldUnitSetting: String
     private lateinit var oldLanguageSetting: String
     private var oldLocationSetting: Boolean = false
-
 
     private val viewModel: SettingsViewModel by viewModels()
 
@@ -57,11 +52,7 @@ class SettingsFragment : Fragment() {
                 changeMapLocationDialog()
             } else {
                 setSettingsToSharedPreferences()
-                if (newLanguageSetting != oldLanguageSetting) {
-                    setLocale(newLanguageSetting)
-                } else {
-                    backToHomeScreen()
-                }
+                backToHomeScreen()
             }
         }
         binding.btnBack.setOnClickListener {
@@ -70,8 +61,9 @@ class SettingsFragment : Fragment() {
     }
 
     private fun backToHomeScreen() {
-        Navigation.findNavController(binding.root)
-            .navigate(R.id.action_settingsFragment_to_navigation_home)
+        val refresh = Intent(requireContext(), MainActivity::class.java)
+        activity?.finish()
+        startActivity(refresh)
     }
 
     private fun getUnitSettings() {
@@ -164,37 +156,16 @@ class SettingsFragment : Fragment() {
             .setTitle("Do you want to change your location on map again?")
             .setNegativeButton("No") { dialog, _ ->
                 setSettingsToSharedPreferences()
-                if (newLanguageSetting != oldLanguageSetting) {
-                    setLocale(newLanguageSetting)
-                } else {
-                    backToHomeScreen()
-                }
+                backToHomeScreen()
                 dialog.dismiss()
             }
             .setPositiveButton("Yes") { dialog, _ ->
                 resetLocationData()
                 setSettingsToSharedPreferences()
-                if (newLanguageSetting != oldLanguageSetting) {
-                    setLocale(newLanguageSetting)
-                } else {
-                    backToHomeScreen()
-                }
+                backToHomeScreen()
                 dialog.dismiss()
             }
             .show()
     }
-
-    private fun setLocale(lang: String) {
-        val myLocale = Locale(lang)
-        val res: Resources = resources
-        val dm: DisplayMetrics = res.displayMetrics
-        val conf: Configuration = res.configuration
-        conf.locale = myLocale
-        res.updateConfiguration(conf, dm)
-        val refresh = Intent(requireContext(), MainActivity::class.java)
-        activity?.finish()
-        startActivity(refresh)
-    }
-
 
 }

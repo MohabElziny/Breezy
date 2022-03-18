@@ -8,6 +8,7 @@ import com.iti.mohab.breezy.datasource.local.WeatherDatabase
 import com.iti.mohab.breezy.datasource.remote.RemoteSource
 import com.iti.mohab.breezy.datasource.remote.RetrofitHelper
 import com.iti.mohab.breezy.model.OpenWeatherApi
+import com.iti.mohab.breezy.model.WeatherAlert
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -82,5 +83,48 @@ class WeatherRepository(
         return weatherLocalDataSource.getFavoritesWeather()
     }
 
+    override suspend fun deleteFavoriteWeather(id: Int) {
+        weatherLocalDataSource.deleteFavoriteWeather(id)
+    }
 
+    override fun getFavoriteWeather(id: Int): OpenWeatherApi {
+        return weatherLocalDataSource.getFavoriteWeather(id)
+    }
+
+    override suspend fun updateWeather(weather: OpenWeatherApi) {
+        weatherLocalDataSource.updateWeather(weather)
+    }
+
+    override suspend fun updateFavoriteWeather(
+        latitude: String,
+        longitude: String,
+        units: String,
+        language: String,
+        id: Int
+    ): OpenWeatherApi {
+        val response =
+            weatherRemoteDataSource.getCurrentWeather(latitude, longitude, language, units)
+        if (response.isSuccessful) {
+            response.body()?.let {
+                it.id = id
+                it.isFavorite = true
+                updateWeather(it)
+            }
+            return getFavoriteWeather(id)
+        } else {
+            throw Exception("${response.errorBody()}")
+        }
+    }
+
+    override suspend fun insertAlert(alert: WeatherAlert) {
+        weatherLocalDataSource.insertAlert(alert)
+    }
+
+    override fun getAlertsList(): Flow<List<WeatherAlert>> {
+        return weatherLocalDataSource.getAlertsList()
+    }
+
+    override suspend fun deleteAlert(id: Int) {
+        weatherLocalDataSource.deleteAlert(id)
+    }
 }

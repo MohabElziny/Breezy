@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Breezy</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">favorites</string>
+    <string name="title_dashboard">Favorites</string>
     <string name="title_notifications">ِAlerts</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="alerts">ِAlerts</string>
     <string name="pressure">Pressure</string>
     <string name="Humidity">Humidity</string>
     <string name="wind_speed">Wind speed</string>
@@ -41,4 +44,12 @@
     <string name="isFavorite">isFavorite</string>
     <string name="empty_List">Click add button to insert favorites!</string>
     <string name="latlon">Lat,Lon</string>
+    <string name="btn_enable">Enable</string>
+    <string name="location_permission">Enable Location permission</string>
+    <string name="location_enabled">Enable Location</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="time_picker">Select Appointment time</string>
+    <string name="date_picker">Choose date</string>
+    <string name="no_alerts_yet">No Alerts Yet</string>
 </resources>

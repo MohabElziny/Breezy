@@ -1,20 +1,34 @@
 package com.iti.mohab.breezy
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.iti.mohab.breezy.databinding.ActivityMainBinding
+import com.iti.mohab.breezy.util.getCurrentLocale
+import java.util.*
+import com.iti.mohab.breezy.util.getSharedPreferences
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController:NavController
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val local = getCurrentLocale(this)
+        val language = getSharedPreferences(this).getString(
+            getString(R.string.languageSetting),
+            local?.language
+        ) ?: local?.language
+        setLocale(language!!)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,10 +49,22 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    private fun setLocale(lang: String) {
+        val myLocale = Locale(lang)
+        Locale.setDefault(myLocale)
+        val res: Resources = resources
+        val dm: DisplayMetrics = res.displayMetrics
+        val conf: Configuration = res.configuration
+        conf.locale = myLocale
+        conf.setLayoutDirection(myLocale)
+        res.updateConfiguration(conf, dm)
+    }
+
     override fun onBackPressed() {
-        if(navController.currentDestination?.id == R.id.navigation_home){
+        if (navController.currentDestination?.id == R.id.navigation_home) {
             finish()
         }
         super.onBackPressed()
     }
+
 }

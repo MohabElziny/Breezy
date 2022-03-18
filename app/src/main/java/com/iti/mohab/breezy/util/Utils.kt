@@ -41,19 +41,19 @@ fun getIcon(imageString: String): Int {
     return imageInInteger
 }
 
-fun convertLongToTime(time: Long): String {
+fun convertLongToTime(time: Long, language: String): String {
     val date = Date(TimeUnit.SECONDS.toMillis(time))
-    val format = SimpleDateFormat("h:mm a")
+    val format = SimpleDateFormat("h:mm a", Locale(language))
     return format.format(date)
 }
 
-fun convertCalenderToDayString(calendar: Calendar): String {
-    return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)
+fun convertCalenderToDayString(calendar: Calendar, language: String): String {
+    return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale(language))
 }
 
-fun convertCalenderToDayDate(calendar: Calendar): String {
-    val date = Date(calendar.timeInMillis)
-    val format = SimpleDateFormat("d MMM, yyyy")
+fun convertLongToDayDate(time: Long, language: String): String {
+    val date = Date(time)
+    val format = SimpleDateFormat("d MMM, yyyy", Locale(language))
     return format.format(date)
 }
 
@@ -130,9 +130,9 @@ fun getCurrentLocale(context: Context): Locale? {
     }
 }
 
-fun getCityText(context: Context, lat: Double, lon: Double): String {
+fun getCityText(context: Context, lat: Double, lon: Double, language: String): String {
     var city = "Unknown!"
-    val geocoder = Geocoder(context, Locale.getDefault())
+    val geocoder = Geocoder(context, Locale(language))
     try {
         val addresses = geocoder.getFromLocation(lat, lon, 1)
         if (addresses.isNotEmpty()) {

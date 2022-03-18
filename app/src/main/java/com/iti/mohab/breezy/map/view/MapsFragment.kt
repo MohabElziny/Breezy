@@ -1,4 +1,4 @@
-package com.iti.mohab.breezy.map
+package com.iti.mohab.breezy.map.view
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -37,7 +37,6 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
 
         val cairo = LatLng(lat, lon)
-//        googleMap.addMarker(MarkerOptions().position(cairo))
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cairo, 10.0f))
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnMapClickListener { location ->
@@ -83,13 +82,7 @@ class MapsFragment : Fragment() {
             getString(R.string.unitsSetting),
             "metric"
         )
-        viewModel.setFavorite(
-            "$lat",
-            "$lon",
-            language!!,
-            units!!
-        )
-        //        val action = MapsFragmentDirections.actionMapsFragmentToNavigationDashboard("$lat,$lon")
+        viewModel.setFavorite("$lat", "$lon", language!!, units!!)
         Navigation.findNavController(binding.root)
             .navigate(R.id.action_mapsFragment_to_navigation_dashboard)
     }
@@ -106,13 +99,16 @@ class MapsFragment : Fragment() {
     private fun handleBackButton() {
         binding.root.isFocusableInTouchMode = true
         binding.root.requestFocus()
-        binding.root.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+        binding.root.setOnKeyListener(View.OnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                activity?.supportFragmentManager?.beginTransaction()?.apply {
-                    remove(this@MapsFragment)
-                    commit()
+                if (isFavorite) {
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_mapsFragment_to_navigation_dashboard)
+                } else {
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_mapsFragment_to_navigation_home)
+
                 }
-                activity?.supportFragmentManager?.popBackStack()
                 return@OnKeyListener true
             }
             false

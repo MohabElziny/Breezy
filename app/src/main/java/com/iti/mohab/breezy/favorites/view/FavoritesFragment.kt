@@ -2,6 +2,7 @@ package com.iti.mohab.breezy.favorites.view
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,25 +45,16 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val previousId = Navigation.findNavController(view).previousBackStackEntry?.destination?.id
+        handleBackButton()
 
         initFavoritesRecyclerView()
+
+        viewModel.getFavorites()
 
         binding.floatingActionButton.setOnClickListener {
             val action = FavoritesFragmentDirections.actionNavigationDashboardToMapsFragment(true)
             findNavController().navigate(action)
         }
-
-//        if (previousId == R.id.mapsFragment) {
-//            val latLon = arguments?.getString(getString(R.string.latlon))?.split(",")
-//            val lat = latLon?.get(0)
-//            val lon = latLon?.get(1)
-//
-//
-//        } else {
-            viewModel.getFavorites()
-//        }
 
         lifecycleScope.launchWhenStarted {
             viewModel.favorites.collect {
@@ -81,7 +73,7 @@ class FavoritesFragment : Fragment() {
 
     private fun initFavoritesRecyclerView() {
         val linearLayoutManager = LinearLayoutManager(FavoritesFragment().context)
-        favoriteAdapter = FavoriteAdapter(this.requireContext())
+        favoriteAdapter = FavoriteAdapter(this.requireContext(),viewModel)
         binding.favoriteRecyclerView.layoutManager = linearLayoutManager
         binding.favoriteRecyclerView.adapter = favoriteAdapter
     }
@@ -89,6 +81,19 @@ class FavoritesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun handleBackButton() {
+        binding.root.isFocusableInTouchMode = true
+        binding.root.requestFocus()
+        binding.root.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                Navigation.findNavController(v)
+                    .navigate(R.id.action_navigation_dashboard_to_navigation_home)
+                return@OnKeyListener true
+            }
+            return@OnKeyListener false
+        })
     }
 
 }

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Breezy</string>
-    <string name="title_home">الصفحة الرئيسية</string>
-    <string name="title_dashboard">المفضلة</string>
-    <string name="title_notifications">تنبيهات</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Favorites</string>
+    <string name="title_notifications">ِAlerts</string>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="favorites">المفضلة</string>
+    <string name="alerts">تنبيهات</string>
     <string name="pressure">الضغط</string>
     <string name="Humidity">الرطوبة</string>
     <string name="wind_speed">سرعة الرياح</string>
@@ -23,6 +26,8 @@
     <string name="languageSetting">language</string>
     <!--    shared_pref-->
     <string name="isMap">isMap</string>
+    <!--    shared_pref-->
+    <string name="latlon">Lat,Lon</string>
     <string name="initial_setting">الإعدادات الأولية</string>
     <string name="text_location">الموقع</string>
     <string name="gps">الموقع الجغرافي</string>
@@ -41,4 +46,12 @@
     <string name="btn_Done">تم</string>
     <string name="isFavorite">isFavorite</string>
     <string name="empty_List">قائمة المفضلة فارغة</string>
+    <string name="btn_enable">تفعيل</string>
+    <string name="location_permission">تفعيل إذن الموقع</string>
+    <string name="location_enabled">تمكن موقع</string>
+    <string name="from">من</string>
+    <string name="to">الي</string>
+    <string name="time_picker">حدد الوقت</string>
+    <string name="date_picker">حدد اليوم</string>
+    <string name="no_alerts_yet">لا يوجد تنبيهات بعد</string>
 </resources>

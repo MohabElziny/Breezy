@@ -1,21 +1,24 @@
 package com.iti.mohab.breezy.home.view
 
-import android.R.attr
-import android.location.Geocoder
+import android.content.IntentFilter
+import android.graphics.Color
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.iti.mohab.breezy.R
+import com.iti.mohab.breezy.broadcastreceiver.ConnectivityReceiver
 import com.iti.mohab.breezy.databinding.FragmentHomeBinding
+import com.iti.mohab.breezy.datasource.MyLocationProvider
 import com.iti.mohab.breezy.datasource.WeatherRepository
 import com.iti.mohab.breezy.home.viewmodel.HomeViewModel
 import com.iti.mohab.breezy.home.viewmodel.HomeViewModelFactory
@@ -23,11 +26,10 @@ import com.iti.mohab.breezy.model.Daily
 import com.iti.mohab.breezy.model.Hourly
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import com.iti.mohab.breezy.util.*
-import java.io.IOException
 import java.util.*
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var tempPerDayAdapter: TempPerDayAdapter
@@ -38,9 +40,13 @@ class HomeFragment : Fragment() {
     private var longitude: Double = 0.0
     private var language: String = "en"
     private var units: String = "metric"
+    private var flagNoConnection: Boolean = false
 
     private val viewModel: HomeViewModel by viewModels {
-        HomeViewModelFactory(WeatherRepository.getRepository(requireActivity().application))
+        HomeViewModelFactory(
+            WeatherRepository.getRepository(requireActivity().application),
+            MyLocationProvider(this)
+        )
     }
 
     // This property is only valid between onCreateView and
@@ -56,28 +62,70 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        ConnectivityReceiver.connectivityReceiverListener = this
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (isOnline(requireContext())) {
+        requireContext().registerReceiver(
+            ConnectivityReceiver(),
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
+
+        if (!flagNoConnection) {
             if (isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
                 if (!isSharedPreferencesLatAndLongNull(requireContext())) {
                     setValuesFromSharedPreferences()
-                    Log.i("mohab", "onViewCreated: $latitude $longitude $language $units")
                     viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
                 } else if (getIsMap()) {
-                    Log.i("zoza", "onViewCreated: ${getIsMap()}")
                     Navigation.findNavController(view)
                         .navigate(R.id.action_navigation_home_to_mapsFragment)
+                } else {
+                    //dialog to get fresh location
+                    val location = MyLocationProvider(this)
+                    if (location.checkPermission() && location.isLocationEnabled()) {
+                        viewModel.getFreshLocation()
+                    }else {
+                        binding.cardLocation.visibility = View.VISIBLE
+                        if (!location.checkPermission()) {
+                            binding.textDialog.text = getString(R.string.location_permission)
+                        } else if (!location.isLocationEnabled()) {
+                            binding.textDialog.text = getString(R.string.location_enabled)
+                        }
+                        binding.btnEnable.setOnClickListener {
+                            viewModel.getFreshLocation()
+                        }
+                    }
+
+                    viewModel.observeLocation().observe(viewLifecycleOwner) {
+                        if (it[0] != 0.0 && it[1] != 0.0) {
+                            latitude = it[0]
+                            longitude = it[1]
+                            val local = getCurrentLocale(requireContext())
+                            language = getSharedPreferences(requireContext()).getString(
+                                getString(R.string.languageSetting), local?.language
+                            )!!
+                            units = getSharedPreferences(requireContext()).getString(
+                                getString(R.string.unitsSetting),
+                                "metric"
+                            )!!
+                            viewModel.getDataFromRemoteToLocal(
+                                "$latitude",
+                                "$longitude",
+                                language,
+                                units
+                            )
+                        }
+                    }
                 }
             } else {
                 setValuesFromSharedPreferences()
                 viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
             }
-        } else {
-            if (!isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
-                viewModel.getDataFromDatabase()
-            }
         }
+
         //tempPerHourAdapter
         initTimeRecyclerView()
 
@@ -89,7 +137,7 @@ class HomeFragment : Fragment() {
                 requireContext(),
                 it.lat,
                 it.lon,
-                getCityText(requireContext(),it.lat, it.lon),
+                getCityText(requireContext(), it.lat, it.lon, language),
                 it.timezone
             )
             setUnitSetting(units)
@@ -102,7 +150,10 @@ class HomeFragment : Fragment() {
             Navigation.findNavController(view)
                 .navigate(R.id.action_navigation_home_to_settingsFragment)
         }
+    }
 
+    private fun getIsMap(): Boolean {
+        return getSharedPreferences(requireContext()).getBoolean(getString(R.string.isMap), false)
     }
 
     private fun setUnitSetting(units: String) {
@@ -120,10 +171,6 @@ class HomeFragment : Fragment() {
                 windSpeedUnit = " m/s"
             }
         }
-    }
-
-    private fun getIsMap(): Boolean {
-        return getSharedPreferences(requireContext()).getBoolean(getString(R.string.isMap), false)
     }
 
     private fun fetchTempPerDayRecycler(daily: ArrayList<Daily>, temperatureUnit: String) {
@@ -146,19 +193,17 @@ class HomeFragment : Fragment() {
         val weather = model.current.weather[0]
         binding.apply {
             imageWeatherIcon.setImageResource(getIcon(weather.icon))
-            textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance())
-            textCurrentDate.text = convertCalenderToDayDate(Calendar.getInstance())
+            textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance(), language)
+            textCurrentDate.text = convertLongToDayDate(Calendar.getInstance().timeInMillis, language)
             textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
             textTempDescription.text = weather.description
             textHumidity.text = model.current.humidity.toString().plus("%")
             textPressure.text = model.current.pressure.toString().plus(" hPa")
             textWindSpeed.text = model.current.windSpeed.toString().plus(windSpeedUnit)
-            textCity.text = getCityText(requireContext(),model.lat, model.lon)
+            textCity.text = getCityText(requireContext(), model.lat, model.lon, language)
         }
 //        binding.textCity.text = model.timezone
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -188,6 +233,39 @@ class HomeFragment : Fragment() {
             units = getString(getString(R.string.unitsSetting), "metric") ?: "metric"
         }
     }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if (isConnected) {
+            if (flagNoConnection) {
+                val snackBar = Snackbar.make(binding.root, "Back Online", Snackbar.LENGTH_SHORT)
+                snackBar.view.setBackgroundColor(Color.GREEN)
+                snackBar.show()
+                flagNoConnection = false
+                refreshFragment()
+            }
+        } else {
+            flagNoConnection = true
+            val snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG)
+            snackBar.view.setBackgroundColor(Color.RED)
+            snackBar.show()
+            getLocalData()
+        }
+    }
+
+    private fun getLocalData() {
+        if (!isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
+            viewModel.getDataFromDatabase()
+        }
+    }
+
+    private fun refreshFragment() {
+        val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false)
+        }
+        ft.detach(this).attach(this).commit()
+    }
+
 
 }
 

@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_displayFavoriteWeather"
+            app:destination="@id/displayFavoriteWeather" />
     </fragment>
 
     <fragment
@@ -47,7 +50,7 @@
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_alerts">
         <action
-            android:id="@+id/action_navigation_notifications_to_navigation_home"
+            android:id="@+id/action_navigation_alerts_to_navigation_home"
             app:destination="@id/navigation_home" />
     </fragment>
     <fragment
@@ -61,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.iti.mohab.breezy.map.MapsFragment"
+        android:name="com.iti.mohab.breezy.map.view.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps">
         <action
@@ -71,5 +74,14 @@
         <action
             android:id="@+id/action_mapsFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/displayFavoriteWeather"
+        android:name="com.iti.mohab.breezy.favorites.view.DisplayFavoriteWeather"
+        android:label="display_favorite_weather_fragment"
+        tools:layout="@layout/display_favorite_weather_fragment" >
+        <action
+            android:id="@+id/action_displayFavoriteWeather_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
     </fragment>
 </navigation>

@@ -119,3 +119,14 @@ data class Alerts(
 
 )
 
+@Entity(tableName = "alert")
+data class WeatherAlert(
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    val id: Int? = null,
+    var startTime: Long,
+    var endTime: Long,
+    var startDate: Long,
+    var endDate: Long
+)
+

@@ -20,6 +20,12 @@ class FavoritesViewModel(private val repository: WeatherRepository) : ViewModel(
         }
     }
 
+    fun deleteFavoriteWeather(id: Int) {
+        viewModelScope.launch {
+            repository.deleteFavoriteWeather(id)
+        }
+    }
+
     private var _favorites = MutableStateFlow<List<OpenWeatherApi>>(emptyList())
     val favorites = _favorites
 
