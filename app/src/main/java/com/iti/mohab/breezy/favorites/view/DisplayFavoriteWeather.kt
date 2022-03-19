@@ -142,12 +142,16 @@ class DisplayFavoriteWeather : Fragment() {
         val weather = model.current.weather[0]
         binding.apply {
             imageWeatherIcon.setImageResource(getIcon(weather.icon))
-            textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance(),language)
-            textCurrentDate.text = convertLongToDayDate(Calendar.getInstance().timeInMillis,language)
+            textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance(), language)
+            textCurrentDate.text =
+                convertLongToDayDate(Calendar.getInstance().timeInMillis, language)
             textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
             textTempDescription.text = weather.description
             textHumidity.text = model.current.humidity.toString().plus("%")
             textPressure.text = model.current.pressure.toString().plus(" hPa")
+            textClouds.text = model.current.clouds.toString().plus("%")
+            textVisibility.text = model.current.visibility.toString().plus("m")
+            textUvi.text = model.current.uvi.toString()
             textWindSpeed.text = model.current.windSpeed.toString().plus(windSpeedUnit)
             textCity.text = getCityText(requireContext(), model.lat, model.lon, language)
         }

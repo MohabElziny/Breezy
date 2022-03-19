@@ -39,10 +39,12 @@ interface IWeatherRepository {
         id: Int
     ): OpenWeatherApi
 
-    suspend fun insertAlert(alert: WeatherAlert)
+    suspend fun insertAlert(alert: WeatherAlert):Long
 
     fun getAlertsList(): Flow<List<WeatherAlert>>
 
     suspend fun deleteAlert(id: Int)
+
+    fun getAlert(id: Int): WeatherAlert
 
 }

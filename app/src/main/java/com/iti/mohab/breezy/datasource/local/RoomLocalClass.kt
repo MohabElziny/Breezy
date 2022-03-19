@@ -14,8 +14,8 @@ class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
         return weatherDao.getFavoriteWeather(id)
     }
 
-    override suspend fun insertAlert(alert: WeatherAlert) {
-        weatherDao.insertAlert(alert)
+    override suspend fun insertAlert(alert: WeatherAlert):Long {
+        return weatherDao.insertAlert(alert)
     }
 
     override fun getAlertsList(): Flow<List<WeatherAlert>> {
@@ -26,8 +26,8 @@ class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
         weatherDao.deleteAlert(id)
     }
 
-    override suspend fun insertCurrentWeather(weather: OpenWeatherApi) {
-        weatherDao.insertWeather(weather)
+    override suspend fun insertCurrentWeather(weather: OpenWeatherApi):Long {
+        return weatherDao.insertWeather(weather)
     }
 
     override suspend fun updateWeather(weather: OpenWeatherApi) {
@@ -46,4 +46,7 @@ class RoomLocalClass(private val weatherDao: WeatherDao) : LocalSource {
         weatherDao.deleteFavoriteWeather(id)
     }
 
+    override fun getAlert(id: Int): WeatherAlert {
+        return weatherDao.getAlert(id)
+    }
 }

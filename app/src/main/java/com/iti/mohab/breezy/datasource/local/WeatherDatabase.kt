@@ -1,6 +1,7 @@
 package com.iti.mohab.breezy.datasource.local
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -24,6 +25,19 @@ abstract class WeatherDatabase : RoomDatabase() {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     application.applicationContext,
+                    WeatherDatabase::class.java,
+                    "weather.db"
+                ).fallbackToDestructiveMigration()
+                    .build().also {
+                        INSTANCE = it
+                    }
+            }
+        }
+
+        fun getDatabase(context: Context): WeatherDatabase {
+            return INSTANCE ?: synchronized(this) {
+                Room.databaseBuilder(
+                    context.applicationContext,
                     WeatherDatabase::class.java,
                     "weather.db"
                 ).fallbackToDestructiveMigration()

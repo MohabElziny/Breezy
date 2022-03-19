@@ -1,0 +1,104 @@
+package com.iti.mohab.breezy.manger
+
+import android.content.Context
+import android.util.Log
+import com.iti.mohab.breezy.R
+import androidx.work.*
+import com.iti.mohab.breezy.datasource.WeatherRepository
+import com.iti.mohab.breezy.model.WeatherAlert
+import com.iti.mohab.breezy.util.getSharedPreferences
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+
+class AlertPeriodicWorkManger(private val context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    val repository = WeatherRepository.getRepository(context)
+
+    override suspend fun doWork(): Result {
+        Log.i("peter", "doWork: ")
+        val data = inputData
+        val id = data.getLong("id", 0)
+        getCurrentData(id.toInt())
+        return Result.success()
+    }
+
+    private fun getCurrentData(id: Int) {
+        val currentWeather = repository.getCurrentWeatherFromLocalDataSource()
+        val alert = repository.getAlert(id)
+        if (checkTime(alert)) {
+            Log.i("Peter", "checkTime: true")
+            val delay: Long = getDelay(alert)
+            if (currentWeather.alerts.isNullOrEmpty()) {
+                setOneTimeWorkManger(
+                    delay,
+                    alert.id,
+                    currentWeather.current.weather[0].description,
+                    currentWeather.current.weather[0].icon
+                )
+            } else {
+                setOneTimeWorkManger(
+                    delay,
+                    alert.id,
+                    currentWeather.alerts!![0].tags[0],
+                    currentWeather.current.weather[0].icon
+                )
+            }
+        } else {
+            Log.i("Peter", "checkTime: false")
+
+        }
+    }
+
+    private fun setOneTimeWorkManger(delay: Long, id: Int?, description: String, icon: String) {
+        val data = Data.Builder()
+        data.putString("description", description)
+        data.putString("icon", icon)
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .build()
+        Log.i("Peter", "setOneTimeWorkManger: $delay")
+        val oneTimeWorkRequest = OneTimeWorkRequest.Builder(
+            AlertOneTimeWorkManger::class.java,
+        )
+            .setInitialDelay(delay, TimeUnit.SECONDS)
+            .setConstraints(constraints)
+            .setInputData(data.build())
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "$id",
+            ExistingWorkPolicy.REPLACE,
+            oneTimeWorkRequest
+        )
+    }
+
+    private fun getDelay(alert: WeatherAlert): Long {
+        val hour =
+            TimeUnit.HOURS.toSeconds(Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toLong())
+        val minute =
+            TimeUnit.MINUTES.toSeconds(Calendar.getInstance().get(Calendar.MINUTE).toLong())
+        return alert.startTime - ((hour + minute) - (2 * 3600L))
+    }
+
+    private fun checkTime(alert: WeatherAlert): Boolean {
+        val year = Calendar.getInstance().get(Calendar.YEAR)
+        val month = Calendar.getInstance().get(Calendar.MONTH)
+        val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        val date = "$day/${month + 1}/$year"
+        val dayNow = getDateMillis(date)
+        return (dayNow in alert.startDate..alert.endDate)
+    }
+
+    private fun getDateMillis(date: String): Long {
+        val language = getSharedPreferences(context).getString(
+            context.getString(R.string.languageSetting),
+            "en"
+        )
+        val f = SimpleDateFormat("dd/MM/yyyy", Locale(language!!))
+        val d: Date = f.parse(date)
+        return d.time
+    }
+
+}

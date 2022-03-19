@@ -13,7 +13,7 @@ interface WeatherDao {
     fun getCurrentWeather(): OpenWeatherApi
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertWeather(weather: OpenWeatherApi)
+    suspend fun insertWeather(weather: OpenWeatherApi): Long
 
     @Update
     suspend fun updateWeather(weather: OpenWeatherApi)
@@ -31,11 +31,14 @@ interface WeatherDao {
     fun getFavoriteWeather(id: Int): OpenWeatherApi
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAlert(alert: WeatherAlert)
+    suspend fun insertAlert(alert: WeatherAlert): Long
 
     @Query("select * from alert")
     fun getAlertsList(): Flow<List<WeatherAlert>>
 
     @Query("DELETE FROM alert where id = :id")
     suspend fun deleteAlert(id: Int)
+
+    @Query("select * from alert where id = :id")
+    fun getAlert(id: Int): WeatherAlert
 }

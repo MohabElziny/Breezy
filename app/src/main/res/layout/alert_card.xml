@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:backgroundTint="@color/white">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/alertCardView"
@@ -72,10 +71,10 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                tools:text="TextView"
                 app:layout_constraintBottom_toBottomOf="@+id/to"
                 app:layout_constraintStart_toStartOf="@+id/text_from"
-                app:layout_constraintTop_toTopOf="@+id/to" />
+                app:layout_constraintTop_toTopOf="@+id/to"
+                tools:text="TextView" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

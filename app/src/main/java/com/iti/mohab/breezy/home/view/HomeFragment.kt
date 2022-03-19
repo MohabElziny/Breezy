@@ -87,7 +87,8 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
                     val location = MyLocationProvider(this)
                     if (location.checkPermission() && location.isLocationEnabled()) {
                         viewModel.getFreshLocation()
-                    }else {
+                    } else {
+                        binding.homeView.visibility = View.GONE
                         binding.cardLocation.visibility = View.VISIBLE
                         if (!location.checkPermission()) {
                             binding.textDialog.text = getString(R.string.location_permission)
@@ -96,27 +97,6 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
                         }
                         binding.btnEnable.setOnClickListener {
                             viewModel.getFreshLocation()
-                        }
-                    }
-
-                    viewModel.observeLocation().observe(viewLifecycleOwner) {
-                        if (it[0] != 0.0 && it[1] != 0.0) {
-                            latitude = it[0]
-                            longitude = it[1]
-                            val local = getCurrentLocale(requireContext())
-                            language = getSharedPreferences(requireContext()).getString(
-                                getString(R.string.languageSetting), local?.language
-                            )!!
-                            units = getSharedPreferences(requireContext()).getString(
-                                getString(R.string.unitsSetting),
-                                "metric"
-                            )!!
-                            viewModel.getDataFromRemoteToLocal(
-                                "$latitude",
-                                "$longitude",
-                                language,
-                                units
-                            )
                         }
                     }
                 }
@@ -131,6 +111,29 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
 
         //tempPerDayAdapter
         initDayRecyclerView()
+
+        viewModel.observeLocation().observe(viewLifecycleOwner) {
+            binding.homeView.visibility = View.VISIBLE
+            binding.cardLocation.visibility = View.GONE
+            if (it[0] != 0.0 && it[1] != 0.0) {
+                latitude = it[0]
+                longitude = it[1]
+                val local = getCurrentLocale(requireContext())
+                language = getSharedPreferences(requireContext()).getString(
+                    getString(R.string.languageSetting), local?.language
+                )!!
+                units = getSharedPreferences(requireContext()).getString(
+                    getString(R.string.unitsSetting),
+                    "metric"
+                )!!
+                viewModel.getDataFromRemoteToLocal(
+                    "$latitude",
+                    "$longitude",
+                    language,
+                    units
+                )
+            }
+        }
 
         viewModel.openWeatherAPI.observe(viewLifecycleOwner) {
             updateSharedPreferences(
@@ -194,11 +197,15 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         binding.apply {
             imageWeatherIcon.setImageResource(getIcon(weather.icon))
             textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance(), language)
-            textCurrentDate.text = convertLongToDayDate(Calendar.getInstance().timeInMillis, language)
+            textCurrentDate.text =
+                convertLongToDayDate(Calendar.getInstance().timeInMillis, language)
             textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
             textTempDescription.text = weather.description
             textHumidity.text = model.current.humidity.toString().plus("%")
             textPressure.text = model.current.pressure.toString().plus(" hPa")
+            textClouds.text = model.current.clouds.toString().plus("%")
+            textVisibility.text = model.current.visibility.toString().plus("m")
+            textUvi.text = model.current.uvi.toString()
             textWindSpeed.text = model.current.windSpeed.toString().plus(windSpeedUnit)
             textCity.text = getCityText(requireContext(), model.lat, model.lon, language)
         }

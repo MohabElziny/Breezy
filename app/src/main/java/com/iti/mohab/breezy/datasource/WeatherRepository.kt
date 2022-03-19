@@ -1,6 +1,7 @@
 package com.iti.mohab.breezy.datasource
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.iti.mohab.breezy.datasource.local.LocalSource
 import com.iti.mohab.breezy.datasource.local.RoomLocalClass
@@ -28,6 +29,17 @@ class WeatherRepository(
                 WeatherRepository(
                     RetrofitHelper,
                     RoomLocalClass(WeatherDatabase.getDatabase(app).weatherDao())
+                ).also {
+                    INSTANCE = it
+                }
+            }
+        }
+
+        fun getRepository(context: Context): WeatherRepository {
+            return INSTANCE ?: synchronized(this) {
+                WeatherRepository(
+                    RetrofitHelper,
+                    RoomLocalClass(WeatherDatabase.getDatabase(context).weatherDao())
                 ).also {
                     INSTANCE = it
                 }
@@ -116,8 +128,8 @@ class WeatherRepository(
         }
     }
 
-    override suspend fun insertAlert(alert: WeatherAlert) {
-        weatherLocalDataSource.insertAlert(alert)
+    override suspend fun insertAlert(alert: WeatherAlert): Long {
+        return weatherLocalDataSource.insertAlert(alert)
     }
 
     override fun getAlertsList(): Flow<List<WeatherAlert>> {
@@ -127,4 +139,9 @@ class WeatherRepository(
     override suspend fun deleteAlert(id: Int) {
         weatherLocalDataSource.deleteAlert(id)
     }
+
+    override fun getAlert(id: Int): WeatherAlert {
+        return weatherLocalDataSource.getAlert(id)
+    }
+
 }

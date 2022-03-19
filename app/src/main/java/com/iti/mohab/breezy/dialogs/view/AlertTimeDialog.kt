@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.work.*
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.AlertTimeDialogFragmentBinding
 import com.iti.mohab.breezy.datasource.WeatherRepository
@@ -21,6 +22,7 @@ import com.iti.mohab.breezy.util.convertLongToDayDate
 import com.iti.mohab.breezy.util.convertLongToTime
 import com.iti.mohab.breezy.util.getCurrentLocale
 import com.iti.mohab.breezy.util.getSharedPreferences
+import com.iti.mohab.breezy.manger.AlertPeriodicWorkManger
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -64,6 +66,33 @@ class AlertTimeDialog : DialogFragment() {
             viewModel.insertAlert(weatherAlert)
             dialog!!.dismiss()
         }
+        viewModel.id.observe(viewLifecycleOwner) {
+            Log.i("peter", "onViewCreated: $it")
+            setPeriodWorkManger(it)
+        }
+    }
+
+    private fun setPeriodWorkManger(id: Long) {
+
+        val data = Data.Builder()
+        data.putLong("id", id)
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .build()
+
+        val periodicWorkRequest = PeriodicWorkRequest.Builder(
+            AlertPeriodicWorkManger::class.java,
+            24, TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .setInputData(data.build())
+            .build()
+
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+            "$id",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            periodicWorkRequest
+        )
     }
 
     private fun setCardsInitialText() {
@@ -91,12 +120,10 @@ class AlertTimeDialog : DialogFragment() {
                 val text = dateString.plus("\n").plus(timeString)
                 if (isFrom) {
                     weatherAlert.startTime = time
-                    Log.i("yoka", "startTime: $time")
                     weatherAlert.startDate = datePicker
                     binding.btnFrom.text = text
                 } else {
                     weatherAlert.endTime = time
-                    Log.i("yoka", "endTime: $time")
                     weatherAlert.endDate = datePicker
                     binding.btnTo.text = text
                 }

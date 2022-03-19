@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.iti.mohab.breezy.MainActivity
 import com.iti.mohab.breezy.R
@@ -122,6 +121,8 @@ class SettingsFragment : Fragment() {
             putString(getString(R.string.unitsSetting), newUnitSetting)
             putString(getString(R.string.languageSetting), newLanguageSetting)
             if (newLocationSetting && !oldLocationSetting) {
+                resetLocationData()
+            }else if(oldLocationSetting && !newLocationSetting){
                 resetLocationData()
             }
             putBoolean(getString(R.string.isMap), newLocationSetting)

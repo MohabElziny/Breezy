@@ -1,15 +1,22 @@
 package com.iti.mohab.breezy.alerts.view
 
+import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.alerts.viewmodel.AlertsViewModel
 import com.iti.mohab.breezy.alerts.viewmodel.AlertsViewModelFactory
@@ -18,6 +25,7 @@ import com.iti.mohab.breezy.datasource.WeatherRepository
 import com.iti.mohab.breezy.dialogs.view.AlertTimeDialog
 import com.iti.mohab.breezy.favorites.view.FavoritesFragment
 import com.iti.mohab.breezy.model.WeatherAlert
+import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.flow.collect
 
 class AlertsFragment : Fragment() {
@@ -50,7 +58,16 @@ class AlertsFragment : Fragment() {
         initFavoritesRecyclerView()
 
         binding.btnAddAlert.setOnClickListener {
-            AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+            if (checkFirstTime()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkDrawOverlayPermission()
+                    setNotFirstTime()
+                } else {
+                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                }
+            } else {
+                AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+            }
         }
 
         viewModel.getFavorites()
@@ -65,6 +82,14 @@ class AlertsFragment : Fragment() {
                 fetchAlertsRecycler(it)
             }
         }
+    }
+
+    private fun setNotFirstTime() {
+        getSharedPreferences(requireContext()).edit().putBoolean("permission", false).apply()
+    }
+
+    private fun checkFirstTime(): Boolean {
+        return getSharedPreferences(requireContext()).getBoolean("permission", true)
     }
 
     private fun fetchAlertsRecycler(list: List<WeatherAlert>?) {
@@ -96,5 +121,35 @@ class AlertsFragment : Fragment() {
             false
         })
     }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun checkDrawOverlayPermission() {
+        // Check if we already  have permission to draw over other apps
+        if (!Settings.canDrawOverlays(requireContext())) {
+            // if not construct intent to request permission
+            val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+            alertDialogBuilder.setTitle("We need Your Permission")
+                .setMessage("Let's enjoy our features")
+                .setPositiveButton("Let's Go") { dialog: DialogInterface, i: Int ->
+                    val intent = Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + requireContext().applicationContext.packageName)
+                    )
+                    // request permission via start activity for result
+                    startActivityForResult(
+                        intent,
+                        1
+                    ) //It will call onActivityResult Function After you press Yes/No and go Back after giving permission
+                    dialog.dismiss()
+                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                }.setNegativeButton(
+                    "Cancel"
+                ) { dialog: DialogInterface, i: Int ->
+                    dialog.dismiss()
+                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                }.show()
+        }
+    }
+
 
 }

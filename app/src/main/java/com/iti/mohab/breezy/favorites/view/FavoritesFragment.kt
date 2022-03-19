@@ -58,7 +58,9 @@ class FavoritesFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             viewModel.favorites.collect {
-                if (!it.isNullOrEmpty()) {
+                if (it.isNullOrEmpty()) {
+                    binding.textEmptyList.visibility = View.VISIBLE
+                } else {
                     binding.textEmptyList.visibility = View.GONE
                 }
                 fetchFavoritesRecycler(it)
@@ -73,7 +75,7 @@ class FavoritesFragment : Fragment() {
 
     private fun initFavoritesRecyclerView() {
         val linearLayoutManager = LinearLayoutManager(FavoritesFragment().context)
-        favoriteAdapter = FavoriteAdapter(this.requireContext(),viewModel)
+        favoriteAdapter = FavoriteAdapter(this.requireContext(), viewModel)
         binding.favoriteRecyclerView.layoutManager = linearLayoutManager
         binding.favoriteRecyclerView.adapter = favoriteAdapter
     }
