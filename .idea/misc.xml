@@ -25,7 +25,7 @@
         <entry key="app/src/main/res/layout/favourie_card.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_alerts.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_favorites.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.16" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.25" />
         <entry key="app/src/main/res/layout/initial_setting_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.33" />

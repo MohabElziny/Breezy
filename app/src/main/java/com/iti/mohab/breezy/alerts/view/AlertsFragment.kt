@@ -71,6 +71,36 @@ class AlertsFragment : Fragment() {
         }
 
         viewModel.getFavorites()
+        super.onViewCreated(view, savedInstanceState)
+        backToHomeScreen()
+
+        initFavoritesRecyclerView()
+
+        binding.btnAddAlert.setOnClickListener {
+            if (checkFirstTime()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkDrawOverlayPermission()
+                    setNotFirstTime()
+                } else {
+                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                }
+            } else {
+                AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+            }
+        }
+
+        viewModel.getFavorites()
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.alerts.collect {
+                if (!it.isNullOrEmpty()) {
+                    binding.textEmptyAlert.visibility = View.GONE
+                } else {
+                    binding.textEmptyAlert.visibility = View.VISIBLE
+                }
+                fetchAlertsRecycler(it)
+            }
+        }
 
         lifecycleScope.launchWhenStarted {
             viewModel.alerts.collect {
@@ -128,9 +158,9 @@ class AlertsFragment : Fragment() {
         if (!Settings.canDrawOverlays(requireContext())) {
             // if not construct intent to request permission
             val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
-            alertDialogBuilder.setTitle("We need Your Permission")
-                .setMessage("Let's enjoy our features")
-                .setPositiveButton("Let's Go") { dialog: DialogInterface, i: Int ->
+            alertDialogBuilder.setTitle(getString(R.string.overlay_title))
+                .setMessage(getString(R.string.overlay_message))
+                .setPositiveButton(getString(R.string.overlay_postive_button)) { dialog: DialogInterface, _: Int ->
                     val intent = Intent(
                         Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + requireContext().applicationContext.packageName)
@@ -143,13 +173,12 @@ class AlertsFragment : Fragment() {
                     dialog.dismiss()
                     AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
                 }.setNegativeButton(
-                    "Cancel"
-                ) { dialog: DialogInterface, i: Int ->
+                    getString(R.string.overlay_negative_button)
+                ) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
                     AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
                 }.show()
         }
     }
-
 
 }

@@ -154,13 +154,13 @@ class SettingsFragment : Fragment() {
 
     private fun changeMapLocationDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Do you want to change your location on map again?")
-            .setNegativeButton("No") { dialog, _ ->
+            .setTitle(getString(R.string.map_dialog_title))
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 setSettingsToSharedPreferences()
                 backToHomeScreen()
                 dialog.dismiss()
             }
-            .setPositiveButton("Yes") { dialog, _ ->
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 resetLocationData()
                 setSettingsToSharedPreferences()
                 backToHomeScreen()

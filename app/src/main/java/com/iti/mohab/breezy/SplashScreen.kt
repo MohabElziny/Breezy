@@ -4,17 +4,23 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import com.iti.mohab.breezy.databinding.ActivitySplashScreenBinding
 import com.iti.mohab.breezy.dialogs.view.InitialSettingDialog
 import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.*
+
+private lateinit var binding: ActivitySplashScreenBinding
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
     private val parentJob = Job()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
+        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         if (isFirstTime()) {
+            binding.lottieAnimationView.visibility = View.GONE
             InitialSettingDialog().show(supportFragmentManager, "InitialFragment")
         } else {
             val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)

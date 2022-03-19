@@ -58,4 +58,11 @@
     <string name="next_hours">Next Hours</string>
     <string name="channel_name">channel_name_zoz</string>
     <string name="channel_description">channel_description_zoz</string>
+    <string name="map_dialog_title">Do you want to change your location on map again?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="overlay_title">We Need Your Permission</string>
+    <string name="overlay_message">Let\'s enjoy our features</string>
+    <string name="overlay_postive_button">Let\'s Go</string>
+    <string name="overlay_negative_button">Cancel</string>
 </resources>

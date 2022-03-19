@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.TempPerTimeCardBinding
 import com.iti.mohab.breezy.model.Hourly
+import com.iti.mohab.breezy.util.convertNumbersToArabic
 import com.iti.mohab.breezy.util.convertLongToTime
 import com.iti.mohab.breezy.util.getIcon
 import com.iti.mohab.breezy.util.getSharedPreferences
@@ -35,8 +36,13 @@ class TempPerTimeAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val hour = hourly[position + 1]
         holder.binding.imageCardTempIcon.setImageResource(getIcon(hour.weather[0].icon))
-        holder.binding.textCardTemp.text = "${hour.temp}".plus(temperatureUnit)
-        holder.binding.textCardTime.text = convertLongToTime(hour.dt,language).lowercase()
+        if (language == "ar") {
+            holder.binding.textCardTemp.text =
+                convertNumbersToArabic(hour.temp).plus(temperatureUnit)
+        } else {
+            holder.binding.textCardTemp.text = "${hour.temp}".plus(temperatureUnit)
+        }
+        holder.binding.textCardTime.text = convertLongToTime(hour.dt, language).lowercase()
     }
 
     override fun getItemCount(): Int {
@@ -49,7 +55,7 @@ class TempPerTimeAdapter(private val context: Context) :
         if (hourly.isNotEmpty()) {
             for (i in 0..hourly.size) {
                 val time = convertLongToTime(hourly[i].dt, language).lowercase()
-                if ( time == "11:00 pm"  || time == "١١:٠٠ م") {
+                if (time == "11:00 pm" || time == "١١:٠٠ م") {
                     size = i
                     break
                 }

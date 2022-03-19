@@ -1,11 +1,11 @@
 package com.iti.mohab.breezy.manger
 
 import android.content.Context
-import android.util.Log
 import com.iti.mohab.breezy.R
 import androidx.work.*
 import com.iti.mohab.breezy.datasource.WeatherRepository
 import com.iti.mohab.breezy.model.WeatherAlert
+import com.iti.mohab.breezy.util.getCurrentLocale
 import com.iti.mohab.breezy.util.getSharedPreferences
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,18 +17,18 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
     val repository = WeatherRepository.getRepository(context)
 
     override suspend fun doWork(): Result {
-        Log.i("peter", "doWork: ")
-        val data = inputData
-        val id = data.getLong("id", 0)
-        getCurrentData(id.toInt())
+        if (!isStopped) {
+            val data = inputData
+            val id = data.getLong("id", 0)
+            getCurrentData(id.toInt())
+        }
         return Result.success()
     }
 
-    private fun getCurrentData(id: Int) {
+    private suspend fun getCurrentData(id: Int) {
         val currentWeather = repository.getCurrentWeatherFromLocalDataSource()
         val alert = repository.getAlert(id)
         if (checkTime(alert)) {
-            Log.i("Peter", "checkTime: true")
             val delay: Long = getDelay(alert)
             if (currentWeather.alerts.isNullOrEmpty()) {
                 setOneTimeWorkManger(
@@ -46,8 +46,8 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
                 )
             }
         } else {
-            Log.i("Peter", "checkTime: false")
-
+            repository.deleteAlert(id)
+            WorkManager.getInstance().cancelAllWorkByTag("$id")
         }
     }
 
@@ -58,7 +58,6 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         val constraints = Constraints.Builder()
             .setRequiresBatteryNotLow(true)
             .build()
-        Log.i("Peter", "setOneTimeWorkManger: $delay")
         val oneTimeWorkRequest = OneTimeWorkRequest.Builder(
             AlertOneTimeWorkManger::class.java,
         )
@@ -88,13 +87,13 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         val date = "$day/${month + 1}/$year"
         val dayNow = getDateMillis(date)
-        return (dayNow in alert.startDate..alert.endDate)
+        return dayNow >= alert.startDate && dayNow <= alert.endDate
     }
 
     private fun getDateMillis(date: String): Long {
         val language = getSharedPreferences(context).getString(
             context.getString(R.string.languageSetting),
-            "en"
+            getCurrentLocale(context)?.language
         )
         val f = SimpleDateFormat("dd/MM/yyyy", Locale(language!!))
         val d: Date = f.parse(date)

@@ -87,6 +87,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$roomVersion"
+    //for swipe
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     //for location
     implementation 'com.google.android.gms:play-services-location:19.0.1'

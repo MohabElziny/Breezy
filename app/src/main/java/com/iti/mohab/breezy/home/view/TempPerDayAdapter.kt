@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.TempPerDayCardBinding
 import com.iti.mohab.breezy.model.Daily
+import com.iti.mohab.breezy.util.convertNumbersToArabic
 import com.iti.mohab.breezy.util.getIcon
 import com.iti.mohab.breezy.util.getSharedPreferences
 import java.text.SimpleDateFormat
@@ -42,7 +43,12 @@ class TempPerDayAdapter(private val context: Context) :
         holder.binding.imageCardDayIcon.setImageResource(getIcon(day.weather[0].icon))
         holder.binding.textCardDay.text = convertLongToDay(day.dt)
         holder.binding.textCardDayTempDescription.text = day.weather[0].description
-        holder.binding.textCardDayTemp.text = day.temp.day.toString().plus(temperatureUnit)
+        if (language == "ar") {
+            holder.binding.textCardDayTemp.text =
+                convertNumbersToArabic(day.temp.day).plus(temperatureUnit)
+        } else {
+            holder.binding.textCardDayTemp.text = day.temp.day.toString().plus(temperatureUnit)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -51,7 +57,7 @@ class TempPerDayAdapter(private val context: Context) :
 
     private fun convertLongToDay(time: Long): String {
         val date = Date(TimeUnit.SECONDS.toMillis(time))
-        val format = SimpleDateFormat("EEE, d MMM yyyy",Locale(language))
+        val format = SimpleDateFormat("EEE, d MMM yyyy", Locale(language))
         return format.format(date)
     }
 }

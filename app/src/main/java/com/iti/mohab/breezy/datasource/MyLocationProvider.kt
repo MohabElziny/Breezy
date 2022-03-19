@@ -7,14 +7,16 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
 import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 
+
 class MyLocationProvider(private val fragment: Fragment) {
-    private val permissionId: Int = 14
     private var myLocationList = ArrayList<Double>()
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
@@ -30,13 +32,7 @@ class MyLocationProvider(private val fragment: Fragment) {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            fragment.requireActivity(), arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            permissionId
-        )
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     // for get last location
@@ -47,38 +43,17 @@ class MyLocationProvider(private val fragment: Fragment) {
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
     }
 
-/*    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ID) {
-            // if request id cancelled, the result array will be empty
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //request location updates
-//                getFreshLocation()
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    requireActivity(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            ) {
-                startMainActivity()
-                Toast.makeText(requireContext(), "You must open the Location", Toast.LENGTH_SHORT)
-                    .show()
-                *//*if(yes){
-                    requestPermission();
-                }else{
-                    use the app without permission
-                }*//*
+    private val requestPermissionLauncher: ActivityResultLauncher<String> =
+        fragment.registerForActivityResult(RequestPermission()) { isGranted ->
+            if (isGranted) {
+                getFreshLocation()
+            } else {
+                denyPermission.postValue("denied")
             }
         }
-    }*/
 
     fun getFreshLocation() {
         val locationRequest = LocationRequest.create()
-        //        locationRequest.setFastestInterval(5000)
-//        locationRequest.numUpdates = 1
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 1000
         if (checkPermission()) {
@@ -114,13 +89,11 @@ class MyLocationProvider(private val fragment: Fragment) {
         }
     }
 
-
     private var _locationList = MutableLiveData<ArrayList<Double>>()
     val locationList = _locationList
 
-//    fun observeLocationData(): LiveData<ArrayList<Double>> {
-//            return locationList
-//    }
+    private var _denyPermission = MutableLiveData<String>()
+    val denyPermission = _denyPermission
 
     private fun enableLocationSetting() {
         val settingIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)

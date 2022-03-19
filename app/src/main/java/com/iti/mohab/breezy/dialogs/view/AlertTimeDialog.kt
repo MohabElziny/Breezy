@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +66,6 @@ class AlertTimeDialog : DialogFragment() {
             dialog!!.dismiss()
         }
         viewModel.id.observe(viewLifecycleOwner) {
-            Log.i("peter", "onViewCreated: $it")
             setPeriodWorkManger(it)
         }
     }
@@ -76,6 +74,7 @@ class AlertTimeDialog : DialogFragment() {
 
         val data = Data.Builder()
         data.putLong("id", id)
+
         val constraints = Constraints.Builder()
             .setRequiresBatteryNotLow(true)
             .build()
@@ -97,12 +96,13 @@ class AlertTimeDialog : DialogFragment() {
 
     private fun setCardsInitialText() {
         val current = Calendar.getInstance().timeInMillis
-        val timeNow = convertLongToTime(current / 1000L, language)
+        val timeNow = convertLongToTime((current / 1000L) + 60, language)
         val currentDate = convertLongToDayDate(current, language)
         val oneHour = 3600000L
         val afterOneHour = current + oneHour
         val timeAfterOneHour = convertLongToTime(afterOneHour / 1000L, language)
-        weatherAlert = WeatherAlert(null, current / 1000, afterOneHour / 1000, current, current)
+        weatherAlert =
+            WeatherAlert(null, (current / 1000L) + 60, afterOneHour / 1000, current, current)
         binding.btnFrom.text = currentDate.plus("\n").plus(timeNow)
         binding.btnTo.text = currentDate.plus("\n").plus(timeAfterOneHour)
     }

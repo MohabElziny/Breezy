@@ -160,19 +160,10 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
     }
 
     private fun setUnitSetting(units: String) {
-        when (units) {
-            "metric" -> {
-                temperatureUnit = " °C"
-                windSpeedUnit = " m/s"
-            }
-            "imperial" -> {
-                temperatureUnit = " °F"
-                windSpeedUnit = " miles/h"
-            }
-            "standard" -> {
-                temperatureUnit = " °K"
-                windSpeedUnit = " m/s"
-            }
+        if (language == "en") {
+            setEnglishUnits(units)
+        } else {
+            setArabicUnit(units)
         }
     }
 
@@ -199,17 +190,14 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
             textCurrentDay.text = convertCalenderToDayString(Calendar.getInstance(), language)
             textCurrentDate.text =
                 convertLongToDayDate(Calendar.getInstance().timeInMillis, language)
-            textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
             textTempDescription.text = weather.description
-            textHumidity.text = model.current.humidity.toString().plus("%")
-            textPressure.text = model.current.pressure.toString().plus(" hPa")
-            textClouds.text = model.current.clouds.toString().plus("%")
-            textVisibility.text = model.current.visibility.toString().plus("m")
-            textUvi.text = model.current.uvi.toString()
-            textWindSpeed.text = model.current.windSpeed.toString().plus(windSpeedUnit)
             textCity.text = getCityText(requireContext(), model.lat, model.lon, language)
+            if (language == "ar") {
+                bindArabicUnits(model)
+            } else {
+                bindEnglishUnits(model)
+            }
         }
-//        binding.textCity.text = model.timezone
     }
 
     override fun onDestroyView() {
@@ -273,6 +261,68 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         ft.detach(this).attach(this).commit()
     }
 
+    private fun setArabicUnit(units: String) {
+        when (units) {
+            "metric" -> {
+                temperatureUnit = " °م"
+                windSpeedUnit = " م/ث"
+            }
+            "imperial" -> {
+                temperatureUnit = " °ف"
+                windSpeedUnit = " ميل/س"
+            }
+            "standard" -> {
+                temperatureUnit = " °ك"
+                windSpeedUnit = " م/ث"
+            }
+        }
+    }
 
+    private fun setEnglishUnits(units: String) {
+        when (units) {
+            "metric" -> {
+                temperatureUnit = " °C"
+                windSpeedUnit = " m/s"
+            }
+            "imperial" -> {
+                temperatureUnit = " °F"
+                windSpeedUnit = " miles/h"
+            }
+            "standard" -> {
+                temperatureUnit = " °K"
+                windSpeedUnit = " m/s"
+            }
+        }
+    }
+
+    private fun bindArabicUnits(model: OpenWeatherApi) {
+        binding.apply {
+            textCurrentTempreture.text =
+                convertNumbersToArabic(model.current.temp).plus(temperatureUnit)
+            textHumidity.text = convertNumbersToArabic(model.current.humidity)
+                .plus("٪")
+            textPressure.text = convertNumbersToArabic(model.current.pressure)
+                .plus(" هب")
+            textClouds.text = convertNumbersToArabic(model.current.clouds)
+                .plus("٪")
+            textVisibility.text = convertNumbersToArabic(model.current.visibility)
+                .plus("م")
+            textUvi.text = convertNumbersToArabic(model.current.uvi)
+            textWindSpeed.text =
+                convertNumbersToArabic(model.current.windSpeed).plus(windSpeedUnit)
+        }
+    }
+
+    private fun bindEnglishUnits(model: OpenWeatherApi) {
+        binding.apply {
+            textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
+            textHumidity.text = model.current.humidity.toString().plus("%")
+            textPressure.text = model.current.pressure.toString().plus(" hPa")
+            textClouds.text = model.current.clouds.toString().plus("%")
+            textVisibility.text = model.current.visibility.toString().plus("m")
+            textUvi.text = model.current.uvi.toString()
+            textWindSpeed.text = model.current.windSpeed.toString().plus(windSpeedUnit)
+        }
+    }
 }
 

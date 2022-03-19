@@ -39,7 +39,6 @@ class AlertService : Service() {
             alertWindowManger = AlertWindowManger(this, description, icon)
             alertWindowManger!!.setMyWindowManger()
         }
-
         return START_NOT_STICKY
     }
 
@@ -60,10 +59,10 @@ class AlertService : Service() {
             .setContentTitle("Weather Alarm")
             .setLargeIcon(bitmap)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setStyle(
-//                NotificationCompat.BigTextStyle()
-//                    .bigText(description)
-//            )
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(description)
+            )
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
             .setAutoCancel(true)
             .build()

@@ -15,4 +15,8 @@ class DialogViewModel(private val myLocationProvider: MyLocationProvider) : View
         return myLocationProvider.locationList
     }
 
+    fun observePermission():LiveData<String>{
+        return myLocationProvider.denyPermission
+    }
+
 }

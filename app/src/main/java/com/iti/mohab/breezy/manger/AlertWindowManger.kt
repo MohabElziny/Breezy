@@ -40,7 +40,7 @@ class AlertWindowManger(
         val width = (context.resources.displayMetrics.widthPixels * 0.85).toInt()
         val params = WindowManager.LayoutParams(
             width,
-            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LOCAL_FOCUS_MODE,
             PixelFormat.TRANSLUCENT

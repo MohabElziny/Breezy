@@ -63,4 +63,11 @@
     <string name="channel_name">channel_name_zoz</string>
     <!--    notification-->
     <string name="channel_description">channel_description_zoz</string>
+    <string name="map_dialog_title">هل تريد تغيير موقعك على الخريطة مرة أخرى؟</string>
+    <string name="no">لا</string>
+    <string name="yes">نعم</string>
+    <string name="overlay_title">نحن بحاجة إلى إذنك</string>
+    <string name="overlay_message">استمتع بجميع مميزاتنا</string>
+    <string name="overlay_postive_button">هيا بنا</string>
+    <string name="overlay_negative_button">إلغاء</string>
 </resources>

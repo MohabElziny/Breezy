@@ -1,6 +1,7 @@
 package com.iti.mohab.breezy.dialogs.view
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -31,9 +32,7 @@ class InitialSettingDialog : DialogFragment() {
     ): View {
         dialog!!.window?.setBackgroundDrawableResource(R.drawable.round_corner);
         _binding = InitialSettingDialogBinding.inflate(inflater, container, false)
-//        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         return binding.root
-//        return inflater.inflate(R.layout.initial_setting_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,7 +42,6 @@ class InitialSettingDialog : DialogFragment() {
         language = local?.language
         binding.btnOk.setOnClickListener {
             if (binding.radioGroup.checkedRadioButtonId == R.id.radio_gps) {
-//                getFreshLocation()
                 viewModel.getFreshLocation()
             } else if (binding.radioGroup.checkedRadioButtonId == R.id.radio_maps) {
                 saveIsMapInSharedPreferences()
@@ -51,9 +49,16 @@ class InitialSettingDialog : DialogFragment() {
         }
 
         viewModel.observeLocation().observe(viewLifecycleOwner) {
-                if (it[0] != 0.0 && it[1] != 0.0) {
-                    saveLocationInSharedPreferences(it[0], it[1])
-                }
+            if (it[0] != 0.0 && it[1] != 0.0) {
+                saveLocationInSharedPreferences(it[0], it[1])
+            }
+        }
+
+        viewModel.observePermission().observe(viewLifecycleOwner){
+            if(it == "denied"){
+                dialog!!.dismiss()
+                startMainActivity()
+            }
         }
     }
 
@@ -68,7 +73,7 @@ class InitialSettingDialog : DialogFragment() {
     }
 
 
-    private fun saveLocationInSharedPreferences(lat: Double,long: Double) {
+    private fun saveLocationInSharedPreferences(lat: Double, long: Double) {
         getSharedPreferences(this.requireContext()).edit().apply {
             putFloat(getString(R.string.lat), lat.toFloat())
             putFloat(getString(R.string.lon), long.toFloat())
@@ -108,5 +113,4 @@ class InitialSettingDialog : DialogFragment() {
             false
         })
     }
-
 }
