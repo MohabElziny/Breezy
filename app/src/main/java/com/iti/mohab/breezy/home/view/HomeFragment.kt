@@ -66,6 +66,11 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         ConnectivityReceiver.connectivityReceiverListener = this
     }
 
+    override fun onPause() {
+        super.onPause()
+//        requireContext().unregisterReceiver(ConnectivityReceiver())
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireContext().registerReceiver(
@@ -288,20 +293,22 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        if (isConnected) {
-            if (flagNoConnection) {
-                val snackBar = Snackbar.make(binding.root, "Back Online", Snackbar.LENGTH_SHORT)
-                snackBar.view.setBackgroundColor(Color.GREEN)
+        if (_binding != null) {
+            if (isConnected) {
+                if (flagNoConnection) {
+                    val snackBar = Snackbar.make(binding.root, "Back Online", Snackbar.LENGTH_SHORT)
+                    snackBar.view.setBackgroundColor(Color.GREEN)
+                    snackBar.show()
+                    flagNoConnection = false
+                    refreshFragment()
+                }
+            } else {
+                flagNoConnection = true
+                val snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG)
+                snackBar.view.setBackgroundColor(Color.RED)
                 snackBar.show()
-                flagNoConnection = false
-                refreshFragment()
+                getLocalData()
             }
-        } else {
-            flagNoConnection = true
-            val snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG)
-            snackBar.view.setBackgroundColor(Color.RED)
-            snackBar.show()
-            getLocalData()
         }
     }
 

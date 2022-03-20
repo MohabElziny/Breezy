@@ -2,7 +2,6 @@ package com.iti.mohab.breezy.datasource
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.iti.mohab.breezy.datasource.local.LocalSource
 import com.iti.mohab.breezy.datasource.local.RoomLocalClass
 import com.iti.mohab.breezy.datasource.local.WeatherDatabase

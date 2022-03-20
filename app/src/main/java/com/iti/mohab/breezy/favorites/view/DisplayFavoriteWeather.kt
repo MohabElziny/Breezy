@@ -1,5 +1,6 @@
 package com.iti.mohab.breezy.favorites.view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.DisplayFavoriteWeatherFragmentBinding
 import com.iti.mohab.breezy.datasource.WeatherRepository
@@ -66,6 +68,9 @@ class DisplayFavoriteWeather : Fragment() {
             getOnlineNeeds()
             viewModel.updateWeather(latitude, longitude, units, language, id)
         } else {
+            val snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG)
+            snackBar.view.setBackgroundColor(Color.RED)
+            snackBar.show()
             viewModel.getWeather(id)
         }
         viewModel.weather.observe(viewLifecycleOwner) {

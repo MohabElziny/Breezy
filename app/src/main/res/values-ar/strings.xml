@@ -29,6 +29,7 @@
     <string name="isMap">isMap</string>
     <!--    shared_pref-->
     <string name="latlon">Lat,Lon</string>
+    <string name="location_text">الموقع</string>
     <string name="initial_setting">الإعدادات الأولية</string>
     <string name="text_location">الموقع</string>
     <string name="gps">الموقع الجغرافي</string>

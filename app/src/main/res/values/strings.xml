@@ -25,6 +25,7 @@
     <string name="languageSetting">language</string>
     <!--    shared_pref-->
     <string name="isMap">isMap</string>
+    <string name="location_text">location</string>
     <string name="initial_setting">Initial Settings</string>
     <string name="text_location">Location:</string>
     <string name="gps">GPS</string>
