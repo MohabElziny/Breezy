@@ -7,19 +7,19 @@ import android.app.Service
 import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.RingtoneManager
+import android.graphics.Color
+import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.provider.Settings;
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.iti.mohab.breezy.MainActivity
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.manger.AlertWindowManger
 import com.iti.mohab.breezy.util.getIcon
-import kotlin.CharSequence
-import kotlin.Int
+
 
 class AlertService : Service() {
 
@@ -64,6 +64,8 @@ class AlertService : Service() {
                 NotificationCompat.BigTextStyle()
                     .bigText(description)
             )
+            .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
+            .setLights(Color.RED, 3000, 3000)
             .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.packageName + "/" + R.raw.weather_alert))//Here is FILE_NAME is the name of file that you want to play
             .setAutoCancel(true)
             .build()
@@ -78,6 +80,13 @@ class AlertService : Service() {
                 "$CHANNEL_ID",
                 name, importance
             )
+            val sound =
+                Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.packageName + "/" + R.raw.weather_alert) //Here is FILE_NAME is the name of file that you want to play
+            val attributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build()
+            channel.enableVibration(true)
+            channel.setSound(sound, attributes)
             channel.description = description
             notificationManager = this.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)

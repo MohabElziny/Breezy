@@ -51,7 +51,7 @@ class AlertTimeDialog : DialogFragment() {
             getString(R.string.languageSetting),
             getCurrentLocale(requireContext())?.language
         )!!
-        setCardsInitialText()
+        setInitialData()
 
         binding.btnFrom.setOnClickListener {
             showDatePicker(true)
@@ -94,23 +94,35 @@ class AlertTimeDialog : DialogFragment() {
         )
     }
 
-    private fun setCardsInitialText() {
-        val current = Calendar.getInstance().timeInMillis
-        val timeNow = convertLongToTime((current / 1000L) + 60, language)
-        val currentDate = convertLongToDayDate(current, language)
-        val oneHour = 3600000L
-        val afterOneHour = current + oneHour
-        val timeAfterOneHour = convertLongToTime(afterOneHour / 1000L, language)
+    private fun setInitialData() {
+        val rightNow = Calendar.getInstance()
+        // init time
+        val currentHour = TimeUnit.HOURS.toSeconds(rightNow.get(Calendar.HOUR_OF_DAY).toLong())
+        val currentMinute = TimeUnit.MINUTES.toSeconds(rightNow.get(Calendar.MINUTE).toLong())
+        val currentTime = (currentHour + currentMinute).minus(3600L * 2)
+        val currentTimeText = convertLongToTime((currentTime + 60), language)
+        val afterOneHour = currentTime.plus(3600L)
+        val afterOneHourText = convertLongToTime(afterOneHour, language)
+        // init day
+        val year = rightNow.get(Calendar.YEAR)
+        val month = rightNow.get(Calendar.MONTH)
+        val day = rightNow.get(Calendar.DAY_OF_MONTH)
+        val date = "$day/${month + 1}/$year"
+        val dayNow = getDateMillis(date)
+        val currentDate = convertLongToDayDate(dayNow, language)
+        //init model
         weatherAlert =
-            WeatherAlert(null, (current / 1000L) + 60, afterOneHour / 1000, current, current)
-        binding.btnFrom.text = currentDate.plus("\n").plus(timeNow)
-        binding.btnTo.text = currentDate.plus("\n").plus(timeAfterOneHour)
+            WeatherAlert(null, (currentTime + 60), afterOneHour, dayNow, dayNow)
+        //init text
+        binding.btnFrom.text = currentDate.plus("\n").plus(currentTimeText)
+        binding.btnTo.text = currentDate.plus("\n").plus(afterOneHourText)
     }
 
     private fun showTimePicker(isFrom: Boolean, datePicker: Long) {
         Locale.setDefault(Locale(language))
-        val currentHour = Calendar.HOUR_OF_DAY
-        val currentMinute = Calendar.MINUTE
+        val rightNow = Calendar.getInstance()
+        val currentHour = rightNow.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = rightNow.get(Calendar.MINUTE)
         val listener: (TimePicker?, Int, Int) -> Unit =
             { _: TimePicker?, hour: Int, minute: Int ->
                 val time = TimeUnit.MINUTES.toSeconds(minute.toLong()) +

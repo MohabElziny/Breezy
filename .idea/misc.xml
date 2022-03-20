@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.166" />
         <entry key="app/src/main/res/drawable/add_location.xml" value="0.1695" />
         <entry key="app/src/main/res/drawable/alerts.xml" value="0.1575" />
         <entry key="app/src/main/res/drawable/delete.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/favorite.xml" value="0.1575" />
         <entry key="app/src/main/res/drawable/humidity.xml" value="0.1575" />
+        <entry key="app/src/main/res/drawable/ic_breezy.xml" value="0.166" />
         <entry key="app/src/main/res/drawable/ic_clouds_svgrepo_com.xml" value="0.1575" />
         <entry key="app/src/main/res/drawable/pressure.xml" value="0.1575" />
         <entry key="app/src/main/res/drawable/round_corner.xml" value="0.11" />
@@ -32,6 +34,7 @@
         <entry key="app/src/main/res/layout/temp_per_day_card.xml" value="0.33" />
         <entry key="app/src/main/res/layout/temp_per_time_card.xml" value="0.33" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.166" />
         <entry key="app/src/main/res/xml/root_preferences.xml" value="0.18" />
       </map>
     </option>

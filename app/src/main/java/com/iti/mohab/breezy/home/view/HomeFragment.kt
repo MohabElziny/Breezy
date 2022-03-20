@@ -28,7 +28,6 @@ import com.iti.mohab.breezy.model.OpenWeatherApi
 import com.iti.mohab.breezy.util.*
 import java.util.*
 
-
 class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     private var _binding: FragmentHomeBinding? = null
@@ -138,18 +137,20 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         }
 
         viewModel.openWeatherAPI.observe(viewLifecycleOwner) {
-            binding.swiperefresh.isRefreshing = false
-            updateSharedPreferences(
-                requireContext(),
-                it.lat,
-                it.lon,
-                getCityText(requireContext(), it.lat, it.lon, language),
-                it.timezone
-            )
-            setUnitSetting(units)
-            setData(it)
-            fetchTempPerTimeRecycler(it.hourly as ArrayList<Hourly>, temperatureUnit)
-            fetchTempPerDayRecycler(it.daily as ArrayList<Daily>, temperatureUnit)
+            if (it != null) {
+                binding.swiperefresh.isRefreshing = false
+                updateSharedPreferences(
+                    requireContext(),
+                    it.lat,
+                    it.lon,
+                    getCityText(requireContext(), it.lat, it.lon, language),
+                    it.timezone
+                )
+                setUnitSetting(units)
+                setData(it)
+                fetchTempPerTimeRecycler(it.hourly as ArrayList<Hourly>, temperatureUnit)
+                fetchTempPerDayRecycler(it.daily as ArrayList<Daily>, temperatureUnit)
+            }
         }
 
         binding.btnSetting.setOnClickListener {
@@ -160,11 +161,15 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
 
     private fun initSwipeRefresh() {
         binding.swiperefresh.setOnRefreshListener {
-            if (!getIsMap()) {
+            if (getIsMap()) {
+                if (!isSharedPreferencesLatAndLongNull(requireContext())) {
+                    binding.swiperefresh.isRefreshing = true
+                    setValuesFromSharedPreferences()
+                    viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
+                }
+            } else {
                 binding.swiperefresh.isRefreshing = true
                 viewModel.getFreshLocation()
-            }else{
-                binding.swiperefresh.isRefreshing = false
             }
         }
     }
