@@ -63,7 +63,7 @@ class AlertService : Service() {
                 NotificationCompat.BigTextStyle()
                     .bigText(description)
             )
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setAutoCancel(true)
             .build()
     }

@@ -51,6 +51,7 @@ class AlertWindowManger(
     private fun bindView() {
         binding?.imageIcon?.setImageResource(getIcon(icon))
         binding?.textDescription?.text = description
+        binding?.btnOk?.text = context.getString(R.string.btn_ok)
         binding?.btnOk?.setOnClickListener {
             close()
             stopMyService()

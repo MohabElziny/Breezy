@@ -9,7 +9,6 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -18,7 +17,8 @@ import com.google.android.gms.location.*
 
 class MyLocationProvider(private val fragment: Fragment) {
     private var myLocationList = ArrayList<Double>()
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var fusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(fragment.requireActivity())
 
     fun checkPermission(): Boolean {
         return (ContextCompat.checkSelfPermission(
@@ -54,15 +54,13 @@ class MyLocationProvider(private val fragment: Fragment) {
 
     fun getFreshLocation() {
         val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 1000
+        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.interval = 120000
+        locationRequest.fastestInterval = 120000
         if (checkPermission()) {
             if (isLocationEnabled()) {
-                fusedLocationProviderClient =
-                    LocationServices.getFusedLocationProviderClient(fragment.requireActivity())
-
-                fusedLocationProviderClient?.apply {
-                    this.requestLocationUpdates(
+                fusedLocationProviderClient.apply {
+                    requestLocationUpdates(
                         locationRequest,
                         locationCallback,
                         Looper.getMainLooper()
@@ -101,8 +99,7 @@ class MyLocationProvider(private val fragment: Fragment) {
     }
 
     private fun stopLocationUpdates() {
-        fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
-
 
 }

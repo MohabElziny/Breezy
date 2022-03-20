@@ -112,6 +112,8 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         //tempPerDayAdapter
         initDayRecyclerView()
 
+        initSwipeRefresh()
+
         viewModel.observeLocation().observe(viewLifecycleOwner) {
             binding.homeView.visibility = View.VISIBLE
             binding.cardLocation.visibility = View.GONE
@@ -136,6 +138,7 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         }
 
         viewModel.openWeatherAPI.observe(viewLifecycleOwner) {
+            binding.swiperefresh.isRefreshing = false
             updateSharedPreferences(
                 requireContext(),
                 it.lat,
@@ -152,6 +155,17 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
         binding.btnSetting.setOnClickListener {
             Navigation.findNavController(view)
                 .navigate(R.id.action_navigation_home_to_settingsFragment)
+        }
+    }
+
+    private fun initSwipeRefresh() {
+        binding.swiperefresh.setOnRefreshListener {
+            if (!getIsMap()) {
+                binding.swiperefresh.isRefreshing = true
+                viewModel.getFreshLocation()
+            }else{
+                binding.swiperefresh.isRefreshing = false
+            }
         }
     }
 
