@@ -8,8 +8,8 @@ The android app lets you:
 * Get weather condition for specific location on map
 * Add specific city to your favorites to keep track of the it's weather
 * Add alert time which will notify you with your current weather condation at this time
-* Support English and Arabic Language
-* Support different units
+* Supports Arabic and English languages
+* Supports different units
 
 ## Permissions
 
