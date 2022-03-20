@@ -77,7 +77,18 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
             if (isSharedPreferencesLocationAndTimeZoneNull(requireContext())) {
                 if (!isSharedPreferencesLatAndLongNull(requireContext())) {
                     setValuesFromSharedPreferences()
-                    viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
+                    try {
+                        viewModel.getDataFromRemoteToLocal(
+                            "$latitude",
+                            "$longitude",
+                            language,
+                            units
+                        )
+                    } catch (e: Exception) {
+                        val snackBar =
+                            Snackbar.make(binding.root, "${e.message}", Snackbar.LENGTH_SHORT)
+                        snackBar.show()
+                    }
                 } else if (getIsMap()) {
                     Navigation.findNavController(view)
                         .navigate(R.id.action_navigation_home_to_mapsFragment)
@@ -101,7 +112,18 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
                 }
             } else {
                 setValuesFromSharedPreferences()
-                viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
+                try {
+                    viewModel.getDataFromRemoteToLocal(
+                        "$latitude",
+                        "$longitude",
+                        language,
+                        units
+                    )
+                } catch (e: Exception) {
+                    val snackBar =
+                        Snackbar.make(binding.root, "${e.message}", Snackbar.LENGTH_SHORT)
+                    snackBar.show()
+                }
             }
         }
 
@@ -127,12 +149,18 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
                     getString(R.string.unitsSetting),
                     "metric"
                 )!!
-                viewModel.getDataFromRemoteToLocal(
-                    "$latitude",
-                    "$longitude",
-                    language,
-                    units
-                )
+                try {
+                    viewModel.getDataFromRemoteToLocal(
+                        "$latitude",
+                        "$longitude",
+                        language,
+                        units
+                    )
+                } catch (e: Exception) {
+                    val snackBar =
+                        Snackbar.make(binding.root, "${e.message}", Snackbar.LENGTH_SHORT)
+                    snackBar.show()
+                }
             }
         }
 
@@ -165,7 +193,18 @@ class HomeFragment : Fragment(), ConnectivityReceiver.ConnectivityReceiverListen
                 if (!isSharedPreferencesLatAndLongNull(requireContext())) {
                     binding.swiperefresh.isRefreshing = true
                     setValuesFromSharedPreferences()
-                    viewModel.getDataFromRemoteToLocal("$latitude", "$longitude", language, units)
+                    try {
+                        viewModel.getDataFromRemoteToLocal(
+                            "$latitude",
+                            "$longitude",
+                            language,
+                            units
+                        )
+                    } catch (e: Exception) {
+                        val snackBar =
+                            Snackbar.make(binding.root, "${e.message}", Snackbar.LENGTH_SHORT)
+                        snackBar.show()
+                    }
                 }
             } else {
                 binding.swiperefresh.isRefreshing = true

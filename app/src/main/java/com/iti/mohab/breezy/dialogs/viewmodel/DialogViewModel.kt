@@ -1,7 +1,6 @@
 package com.iti.mohab.breezy.dialogs.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.iti.mohab.breezy.datasource.MyLocationProvider
 

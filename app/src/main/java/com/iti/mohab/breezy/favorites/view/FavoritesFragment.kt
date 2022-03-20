@@ -1,7 +1,6 @@
 package com.iti.mohab.breezy.favorites.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,6 @@ import com.iti.mohab.breezy.datasource.WeatherRepository
 import com.iti.mohab.breezy.favorites.viewmodel.FavoritesViewModel
 import com.iti.mohab.breezy.favorites.viewmodel.FavoritesViewModelFactory
 import com.iti.mohab.breezy.model.OpenWeatherApi
-import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.flow.collect
 
 class FavoritesFragment : Fragment() {

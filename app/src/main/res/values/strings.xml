@@ -65,4 +65,5 @@
     <string name="overlay_message">Let\'s enjoy our features</string>
     <string name="overlay_postive_button">Let\'s Go</string>
     <string name="overlay_negative_button">Cancel</string>
+    <string name="cancel">Cancel</string>
 </resources>

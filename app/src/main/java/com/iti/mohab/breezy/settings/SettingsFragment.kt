@@ -1,4 +1,4 @@
-package com.iti.mohab.breezy.settings.view
+package com.iti.mohab.breezy.settings
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.iti.mohab.breezy.MainActivity
 import com.iti.mohab.breezy.R
-import com.iti.mohab.breezy.databinding.SettingsFragmentBinding
-import com.iti.mohab.breezy.settings.viewmodel.SettingsViewModel
 import com.iti.mohab.breezy.util.getSharedPreferences
+import com.iti.mohab.breezy.databinding.SettingsFragmentBinding
 
 
 class SettingsFragment : Fragment() {
@@ -26,8 +24,6 @@ class SettingsFragment : Fragment() {
     private lateinit var oldUnitSetting: String
     private lateinit var oldLanguageSetting: String
     private var oldLocationSetting: Boolean = false
-
-    private val viewModel: SettingsViewModel by viewModels()
 
     private val binding get() = _binding!!
 
@@ -122,7 +118,7 @@ class SettingsFragment : Fragment() {
             putString(getString(R.string.languageSetting), newLanguageSetting)
             if (newLocationSetting && !oldLocationSetting) {
                 resetLocationData()
-            }else if(oldLocationSetting && !newLocationSetting){
+            } else if (oldLocationSetting && !newLocationSetting) {
                 resetLocationData()
             }
             putBoolean(getString(R.string.isMap), newLocationSetting)

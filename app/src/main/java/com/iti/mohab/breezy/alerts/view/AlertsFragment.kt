@@ -63,10 +63,10 @@ class AlertsFragment : Fragment() {
                     checkDrawOverlayPermission()
                     setNotFirstTime()
                 } else {
-                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                    showAlertDialog()
                 }
             } else {
-                AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                showAlertDialog()
             }
         }
 
@@ -82,10 +82,10 @@ class AlertsFragment : Fragment() {
                     checkDrawOverlayPermission()
                     setNotFirstTime()
                 } else {
-                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                    showAlertDialog()
                 }
             } else {
-                AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                showAlertDialog()
             }
         }
 
@@ -112,6 +112,10 @@ class AlertsFragment : Fragment() {
                 fetchAlertsRecycler(it)
             }
         }
+    }
+
+    private fun showAlertDialog() {
+        AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
     }
 
     private fun setNotFirstTime() {
@@ -171,12 +175,12 @@ class AlertsFragment : Fragment() {
                         1
                     ) //It will call onActivityResult Function After you press Yes/No and go Back after giving permission
                     dialog.dismiss()
-                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                    showAlertDialog()
                 }.setNegativeButton(
                     getString(R.string.overlay_negative_button)
                 ) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
-                    AlertTimeDialog().show(requireActivity().supportFragmentManager, "AlertDialog")
+                    showAlertDialog()
                 }.show()
         }
     }

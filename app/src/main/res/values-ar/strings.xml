@@ -70,4 +70,5 @@
     <string name="overlay_message">استمتع بجميع مميزاتنا</string>
     <string name="overlay_postive_button">هيا بنا</string>
     <string name="overlay_negative_button">إلغاء</string>
+    <string name="cancel">Cancel</string>
 </resources>

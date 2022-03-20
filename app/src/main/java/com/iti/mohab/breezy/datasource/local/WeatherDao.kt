@@ -1,7 +1,6 @@
 package com.iti.mohab.breezy.datasource.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import com.iti.mohab.breezy.model.WeatherAlert

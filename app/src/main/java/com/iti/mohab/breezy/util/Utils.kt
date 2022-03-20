@@ -6,9 +6,6 @@ import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
-import android.view.KeyEvent
-import android.view.View
 import com.iti.mohab.breezy.R
 import java.io.IOException
 import java.text.SimpleDateFormat

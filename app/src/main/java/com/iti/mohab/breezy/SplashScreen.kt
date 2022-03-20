@@ -10,10 +10,9 @@ import com.iti.mohab.breezy.dialogs.view.InitialSettingDialog
 import com.iti.mohab.breezy.util.getSharedPreferences
 import kotlinx.coroutines.*
 
-private lateinit var binding: ActivitySplashScreenBinding
-
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
+    private lateinit var binding: ActivitySplashScreenBinding
     private val parentJob = Job()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

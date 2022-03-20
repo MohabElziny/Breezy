@@ -65,6 +65,11 @@ class AlertTimeDialog : DialogFragment() {
             viewModel.insertAlert(weatherAlert)
             dialog!!.dismiss()
         }
+
+        binding.btnCancel.setOnClickListener {
+            dialog!!.dismiss()
+        }
+
         viewModel.id.observe(viewLifecycleOwner) {
             setPeriodWorkManger(it)
         }

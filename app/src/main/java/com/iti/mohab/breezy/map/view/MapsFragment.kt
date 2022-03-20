@@ -13,6 +13,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.iti.mohab.breezy.R
 import com.iti.mohab.breezy.databinding.FragmentMapsBinding
 import com.iti.mohab.breezy.datasource.WeatherRepository
@@ -82,9 +83,14 @@ class MapsFragment : Fragment() {
             getString(R.string.unitsSetting),
             "metric"
         )
-        viewModel.setFavorite("$lat", "$lon", language!!, units!!)
-        Navigation.findNavController(binding.root)
-            .navigate(R.id.action_mapsFragment_to_navigation_dashboard)
+        try {
+            viewModel.setFavorite("$lat", "$lon", language!!, units!!)
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_mapsFragment_to_navigation_dashboard)
+        } catch (e: Exception) {
+            val snackBar = Snackbar.make(binding.root, "${e.message}", Snackbar.LENGTH_SHORT)
+            snackBar.show()
+        }
     }
 
     private fun saveLocationInSharedPreferences(long: Double, lat: Double) {

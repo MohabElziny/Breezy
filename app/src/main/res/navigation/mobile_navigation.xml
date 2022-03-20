@@ -55,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.iti.mohab.breezy.settings.view.SettingsFragment"
+        android:name="com.iti.mohab.breezy.settings.SettingsFragment"
         android:label="settings_fragment"
         tools:layout="@layout/settings_fragment">
         <action

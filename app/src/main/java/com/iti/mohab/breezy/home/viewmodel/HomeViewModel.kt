@@ -10,7 +10,10 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class HomeViewModel(private val repository: IWeatherRepository,private val myLocationProvider:MyLocationProvider) : ViewModel() {
+class HomeViewModel(
+    private val repository: IWeatherRepository,
+    private val myLocationProvider: MyLocationProvider
+) : ViewModel() {
 
     fun getDataFromDatabase() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -27,9 +30,14 @@ class HomeViewModel(private val repository: IWeatherRepository,private val myLoc
                 viewModelScope.launch(Dispatchers.IO) {
                     try {
                         result =
-                            repository.insertCurrentWeatherFromRemoteToLocal(lat, long, language, units)
+                            repository.insertCurrentWeatherFromRemoteToLocal(
+                                lat,
+                                long,
+                                language,
+                                units
+                            )
                     } catch (e: Exception) {
-                        Log.i("zoz", "getDataFromRemoteToLocal: ${e.message}")
+                        throw Exception(e.message)
                     }
 
                 }
@@ -43,7 +51,7 @@ class HomeViewModel(private val repository: IWeatherRepository,private val myLoc
         myLocationProvider.getFreshLocation()
     }
 
-    fun observeLocation():LiveData<ArrayList<Double>>{
+    fun observeLocation(): LiveData<ArrayList<Double>> {
         return myLocationProvider.locationList
     }
 

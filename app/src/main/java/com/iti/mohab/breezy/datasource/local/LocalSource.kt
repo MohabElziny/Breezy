@@ -1,6 +1,5 @@
 package com.iti.mohab.breezy.datasource.local
 
-import androidx.room.Query
 import com.iti.mohab.breezy.model.OpenWeatherApi
 import com.iti.mohab.breezy.model.WeatherAlert
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +27,5 @@ interface LocalSource {
     suspend fun deleteAlert(id: Int)
 
     fun getAlert(id: Int): WeatherAlert
-
 
 }
