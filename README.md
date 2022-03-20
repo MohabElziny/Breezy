@@ -5,9 +5,9 @@ Native Mobile Android Application, Weather Forecast, to get the weather conditio
 
 The android app lets you:
 * Get your current location weather condition
-* Get weather condition for specific location on map
-* Add specific city to your favorites to keep track of the it's weather
-* Add alert time which will notify you with your current weather condation at this time
+* Get weather conditions for a specific location on the map
+* Add a specific city to your favorites to keep track of its weather
+* Add alert time which will notify you of your current weather condition at this time
 * Supports Arabic and English languages
 * Supports different units
 
