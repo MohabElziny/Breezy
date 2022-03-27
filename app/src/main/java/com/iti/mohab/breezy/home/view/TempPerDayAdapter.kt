@@ -45,9 +45,9 @@ class TempPerDayAdapter(private val context: Context) :
         holder.binding.textCardDayTempDescription.text = day.weather[0].description
         if (language == "ar") {
             holder.binding.textCardDayTemp.text =
-                convertNumbersToArabic(day.temp.day).plus(temperatureUnit)
+                convertNumbersToArabic(day.temp.day.toInt()).plus(temperatureUnit)
         } else {
-            holder.binding.textCardDayTemp.text = day.temp.day.toString().plus(temperatureUnit)
+            holder.binding.textCardDayTemp.text = day.temp.day.toInt().toString().plus(temperatureUnit)
         }
     }
 

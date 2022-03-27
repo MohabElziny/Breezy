@@ -201,7 +201,7 @@ class DisplayFavoriteWeather : Fragment() {
     private fun bindArabicUnits(model: OpenWeatherApi) {
         binding.apply {
             textCurrentTempreture.text =
-                convertNumbersToArabic(model.current.temp).plus(temperatureUnit)
+                convertNumbersToArabic(model.current.temp.toInt()).plus(temperatureUnit)
             textHumidity.text = convertNumbersToArabic(model.current.humidity)
                 .plus("٪")
             textPressure.text = convertNumbersToArabic(model.current.pressure)
@@ -210,7 +210,7 @@ class DisplayFavoriteWeather : Fragment() {
                 .plus("٪")
             textVisibility.text = convertNumbersToArabic(model.current.visibility)
                 .plus("م")
-            textUvi.text = convertNumbersToArabic(model.current.uvi)
+            textUvi.text = convertNumbersToArabic(model.current.uvi.toInt())
             textWindSpeed.text =
                 convertNumbersToArabic(model.current.windSpeed).plus(windSpeedUnit)
         }
@@ -218,7 +218,7 @@ class DisplayFavoriteWeather : Fragment() {
 
     private fun bindEnglishUnits(model: OpenWeatherApi) {
         binding.apply {
-            textCurrentTempreture.text = model.current.temp.toString().plus(temperatureUnit)
+            textCurrentTempreture.text = model.current.temp.toInt().toString().plus(temperatureUnit)
             textHumidity.text = model.current.humidity.toString().plus("%")
             textPressure.text = model.current.pressure.toString().plus(" hPa")
             textClouds.text = model.current.clouds.toString().plus("%")

@@ -59,7 +59,7 @@
     <string name="clouds">سحب</string>
     <string name="uv">الأشعة فوق البنفسجية</string>
     <string name="visibility">الرؤية</string>
-    <string name="next_hours">الساعات القادمة</string>
+    <string name="next_hours">ال ٢٤ ساعة القادمة</string>
     <!--    notification-->
     <string name="channel_name">channel_name_zoz</string>
     <!--    notification-->
@@ -71,5 +71,5 @@
     <string name="overlay_message">استمتع بجميع مميزاتنا</string>
     <string name="overlay_postive_button">هيا بنا</string>
     <string name="overlay_negative_button">إلغاء</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">إلغاء</string>
 </resources>

@@ -53,8 +53,14 @@ class InitialSettingDialog : DialogFragment() {
             }
         }
 
-        viewModel.observePermission().observe(viewLifecycleOwner){
-            if(it == "denied"){
+        viewModel.observePermission().observe(viewLifecycleOwner) {
+            if (it == "denied") {
+                getSharedPreferences(this.requireContext()).edit().apply {
+                    putBoolean("firstTime", false)
+                    putString(getString(R.string.languageSetting), language)
+                    putString(getString(R.string.unitsSetting), "metric")
+                    apply()
+                }
                 dialog!!.dismiss()
                 startMainActivity()
             }
