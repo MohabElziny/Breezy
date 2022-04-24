@@ -1,9 +1,8 @@
-### Breezy
+# Breezy
 Native Mobile Android Application, Weather Forecast, to get the weather conditions, using design architecture MVVM. 
 
-## Features:
+## Features
 
-The android app lets you:
 * Get your current location weather condition
 * Get weather conditions for a specific location on the map
 * Add a specific city to your favorites to keep track of its weather
@@ -19,3 +18,4 @@ The android app lets you:
 
 ## ScreenShots
 
+<!-- ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here) -->
