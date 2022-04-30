@@ -18,4 +18,6 @@ Native Mobile Android Application, Weather Forecast, to get the weather conditio
 
 ## ScreenShots
 
-<!-- ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here) -->
+![App Screenshot](https://drive.google.com/file/d/1M5U4cEd_r1OXgzV7vy1StiAp16xdOWHY/view?usp=sharing)
+![App Screenshot](https://drive.google.com/file/d/1odKe6o-l43sELMSS3JJ1In2n09e1CDhj/view?usp=sharing)
+![App Screenshot](https://drive.google.com/file/d/1odKe6o-l43sELMSS3JJ1In2n09e1CDhj/view?usp=sharing)
