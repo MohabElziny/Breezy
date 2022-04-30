@@ -19,9 +19,16 @@ Native Mobile Android Application, Weather Forecast, to get the weather conditio
 ## ScreenShots
 <div>
   <img src ="https://user-images.githubusercontent.com/32043983/166106727-b11550f4-73d2-45c3-bfa3-ea8b3a11fcbd.png" width=40% height="800">
-  <img src ="https://user-images.githubusercontent.com/32043983/166106782-5e5abc28-c597-48be-b306-8737b864b93c.jpg" width=40% height="800">
+</div>
+<br>
+<div>
+  <img src ="https://user-images.githubusercontent.com/32043983/166107157-7a06c212-2281-4c0c-b892-f4a06a66a54d.jpg" width=40% height="800">
+</div>
+<br>
+<div>
   <img src ="https://user-images.githubusercontent.com/32043983/166106794-db588558-cc29-4a82-96f2-dac19fdf4661.png" width=40% height="800">
- </div>
+</div>
 <!-- ![Initial_Setting](https://user-images.githubusercontent.com/32043983/166106727-b11550f4-73d2-45c3-bfa3-ea8b3a11fcbd.png) -->
 <!-- ![Home_Screens](https://user-images.githubusercontent.com/32043983/166106782-5e5abc28-c597-48be-b306-8737b864b93c.jpg) -->
 <!-- ![Settings](https://user-images.githubusercontent.com/32043983/166106794-db588558-cc29-4a82-96f2-dac19fdf4661.png) -->
+<!-- !Home_Screens](https://user-images.githubusercontent.com/32043983/166107157-7a06c212-2281-4c0c-b892-f4a06a66a54d.jpg) -->
